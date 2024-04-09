@@ -6,6 +6,7 @@
 [![Modrinth](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.modrinth.com%2Fv2%2Fproject%2Fmine-little-pony%2Fversion&query=%24%5B0%5D.version_number&label=modrinth)](https://modrinth.com/mod/mine-little-pony)
 [![Discord Server](https://img.shields.io/discord/182490536119107584.svg?color=blueviolet)](https://discord.gg/HbJSFyu)
 ![License](https://img.shields.io/github/license/MineLittlePony/MineLittlePony)
+[![Crowdin](https://badges.crowdin.net/mine-little-pony/localized.svg)](https://crowdin.com/project/mine-little-pony)
 ![](https://img.shields.io/badge/api-fabric-orange.svg)
 
 Turns players and mobs into ponies.
