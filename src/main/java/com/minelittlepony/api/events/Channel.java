@@ -19,8 +19,7 @@ import com.minelittlepony.api.pony.PonyData;
 public class Channel {
     private static final Identifier CLIENT_PONY_DATA = new Identifier("minelittlepony", "pony_data");
     private static final Identifier REQUEST_PONY_DATA = new Identifier("minelittlepony", "request_pony_data");
-
-    private static final Logger LOGGER = LogManager.getLogger("MineLittlePony");
+    private static final Logger LOGGER = LogManager.getLogger("MineLittlePony:Networking");
 
     private static boolean registered;
 
