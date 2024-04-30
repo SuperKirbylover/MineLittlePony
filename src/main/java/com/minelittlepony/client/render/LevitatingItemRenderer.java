@@ -1,7 +1,9 @@
 package com.minelittlepony.client.render;
 
 import com.minelittlepony.api.config.PonyConfig;
+import com.minelittlepony.api.model.HornedPonyModel;
 import com.minelittlepony.api.pony.Pony;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.util.render.RenderLayerUtil;
 
 import org.jetbrains.annotations.Nullable;
@@ -34,39 +36,42 @@ public class LevitatingItemRenderer {
      */
     public void renderItem(ItemRenderer itemRenderer, @Nullable LivingEntity entity, ItemStack stack, ModelTransformationMode mode, boolean left, MatrixStack matrix, VertexConsumerProvider renderContext, @Nullable World world, int lightUv, int posLong) {
 
-        if (mode.isFirstPerson()
+        if (entity != null && (mode.isFirstPerson()
                 || mode == ModelTransformationMode.THIRD_PERSON_LEFT_HAND
-                || mode == ModelTransformationMode.THIRD_PERSON_RIGHT_HAND
+                || mode == ModelTransformationMode.THIRD_PERSON_RIGHT_HAND)
             ) {
-            Pony.getManager().getPony(entity).ifPresentOrElse(pony -> {
-                matrix.push();
+            if (MineLittlePony.getInstance().getRenderDispatcher().getPonyRenderer(entity) instanceof PonyRenderContext<LivingEntity, ?> context) {
+                Pony pony = context.getEntityPony(entity);
+                if (context.getInternalRenderer().getModels().body() instanceof HornedPonyModel model) {
+                    matrix.push();
 
-                boolean doMagic = PonyConfig.getInstance().fpsmagic.get() && pony.hasMagic();
+                    boolean doMagic = (mode.isFirstPerson() ? PonyConfig.getInstance().fpsmagic : PonyConfig.getInstance().tpsmagic).get() && model.hasMagic();
 
-                if (doMagic && mode.isFirstPerson()) {
-                    setupPerspective(itemRenderer, entity, stack, left, matrix);
+                    if (doMagic && mode.isFirstPerson()) {
+                        setupPerspective(itemRenderer, entity, stack, left, matrix);
+                    }
+
+                    itemRenderer.renderItem(entity, stack, mode, left, matrix, renderContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
+
+                    if (doMagic) {
+                        VertexConsumerProvider interceptedContext = getProvider(pony, renderContext);
+
+                        matrix.scale(1.1F, 1.1F, 1.1F);
+                        matrix.translate(0.015F, 0.01F, 0.01F);
+
+                        itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
+                        matrix.scale(1.1F, 1.1F, 1.1F);
+                        matrix.translate(-0.03F, -0.02F, -0.02F);
+                        itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
+                    }
+
+                    matrix.pop();
+                    return;
                 }
-
-                itemRenderer.renderItem(entity, stack, mode, left, matrix, renderContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
-
-                if (doMagic) {
-                    VertexConsumerProvider interceptedContext = getProvider(pony, renderContext);
-
-                    matrix.scale(1.1F, 1.1F, 1.1F);
-                    matrix.translate(0.015F, 0.01F, 0.01F);
-
-                    itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
-                    matrix.translate(-0.03F, -0.02F, -0.02F);
-                    itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
-                }
-
-                matrix.pop();
-            }, () -> {
-                itemRenderer.renderItem(entity, stack, mode, left, matrix, renderContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
-            });
-        } else {
-            itemRenderer.renderItem(entity, stack, mode, left, matrix, renderContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
+            }
         }
+
+        itemRenderer.renderItem(entity, stack, mode, left, matrix, renderContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
     }
 
     /**
