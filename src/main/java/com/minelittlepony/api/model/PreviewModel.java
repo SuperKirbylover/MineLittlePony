@@ -1,7 +1,7 @@
 package com.minelittlepony.api.model;
 
-public interface PreviewModel {
-    boolean forceSeapony();
+import net.minecraft.util.Identifier;
 
-    boolean forceNirik();
+public interface PreviewModel {
+    Identifier getForm();
 }

@@ -75,10 +75,14 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
         super.scale(entity, stack, tickDelta);
     }
 
+    protected void preRender(AbstractClientPlayerEntity player, ModelAttributes.Mode mode) {
+        manager.preRender(player, mode);
+    }
+
     @Override
     public void render(AbstractClientPlayerEntity entity, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider renderContext, int lightUv) {
         // EntityModelFeatures: We have to force it to use our models otherwise EMF overrides it and breaks pony rendering
-        manager.preRender(entity, ModelAttributes.Mode.THIRD_PERSON);
+        preRender(entity, ModelAttributes.Mode.THIRD_PERSON);
         shadowRadius = manager.getShadowSize();
         super.render(entity, entityYaw, tickDelta, stack, renderContext, lightUv);
         DebugBoundingBoxRenderer.render(getEntityPony(entity), this, entity, stack, renderContext, tickDelta);
@@ -143,7 +147,7 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
     }
 
     protected void renderArm(MatrixStack stack, VertexConsumerProvider renderContext, int lightUv, AbstractClientPlayerEntity player, Arm side) {
-        manager.preRender(player, ModelAttributes.Mode.FIRST_PERSON);
+        preRender(player, ModelAttributes.Mode.FIRST_PERSON);
 
         stack.push();
         float reflect = side == Arm.LEFT ? 1 : -1;

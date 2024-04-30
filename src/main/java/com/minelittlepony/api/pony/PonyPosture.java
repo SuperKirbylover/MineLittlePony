@@ -86,16 +86,9 @@ public final class PonyPosture {
         return isSitting(entity) && getMountPony(entity).map(Pony::race).orElse(Race.HUMAN) != Race.HUMAN;
     }
 
-    public static boolean isSeaponyModifier(LivingEntity entity) {
-        if (entity instanceof PreviewModel preview) {
-            return preview.forceSeapony();
-        }
-        return hasSeaponyForm(entity) && isPartiallySubmerged(entity);
-    }
-
     public static boolean hasSeaponyForm(LivingEntity entity) {
         if (entity instanceof PreviewModel preview) {
-            return preview.forceSeapony();
+            return preview.getForm() == PonyForm.SEAPONY;
         }
         return Pony.getManager().getPony(entity).filter(pony -> {
             return (pony.race() == Race.SEAPONY
@@ -104,17 +97,9 @@ public final class PonyPosture {
         }).isPresent();
     }
 
-    public static boolean isNirikModifier(LivingEntity entity) {
-        if (entity instanceof PreviewModel preview) {
-            return preview.forceNirik();
-        }
-        return false;
-    }
-
-
     public static boolean hasNirikForm(LivingEntity entity) {
         if (entity instanceof PreviewModel preview) {
-            return preview.forceNirik();
+            return preview.getForm() == PonyForm.NIRIK;
         }
         return Pony.getManager().getPony(entity).filter(pony -> {
             return (pony.race() == Race.KIRIN

@@ -1,14 +1,12 @@
 package com.minelittlepony.client.render.entity;
 
+import com.minelittlepony.api.model.ModelAttributes;
 import com.minelittlepony.api.pony.*;
 
 import java.util.function.Predicate;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 
 public class FormChangingPlayerPonyRenderer extends PlayerPonyRenderer {
@@ -33,14 +31,8 @@ public class FormChangingPlayerPonyRenderer extends PlayerPonyRenderer {
     }
 
     @Override
-    public void render(AbstractClientPlayerEntity player, float entityYaw, float tickDelta, MatrixStack stack, VertexConsumerProvider renderContext, int light) {
-        super.render(player, entityYaw, tickDelta, stack, renderContext, light);
-        updateForm(player);
-    }
-
-    @Override
-    protected void renderArm(MatrixStack stack, VertexConsumerProvider renderContext, int lightUv, AbstractClientPlayerEntity player, Arm side) {
-        super.renderArm(stack, renderContext, lightUv, player, side);
+    protected final void preRender(AbstractClientPlayerEntity player, ModelAttributes.Mode mode) {
+        super.preRender(player, mode);
         updateForm(player);
     }
 

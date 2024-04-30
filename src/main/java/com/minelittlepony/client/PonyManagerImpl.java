@@ -1,8 +1,10 @@
 package com.minelittlepony.client;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.cache.*;
 import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.config.PonyLevel;
+import com.minelittlepony.api.events.PonySkinResolver;
 import com.minelittlepony.api.pony.*;
 import com.minelittlepony.client.render.blockentity.skull.PonySkullRenderer;
 
@@ -50,7 +52,10 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
 
     @Override
     public Pony getPony(PlayerEntity player) {
-        return getPony(getSkin(player), player instanceof ForcedPony ? null : player.getGameProfile() == null ? player.getUuid() : player.getGameProfile().getId());
+        final UUID id = player instanceof ForcedPony ? null : player.getGameProfile() == null ? player.getUuid() : player.getGameProfile().getId();
+        Identifier skin = getSkin(player);
+        skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(player, s -> getPony(s, id), skin), skin);
+        return getPony(skin, id);
     }
 
     @Override
@@ -59,6 +64,7 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
             return Optional.of(getPony(player));
         }
         Identifier skin = getSkin(entity);
+        skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(entity, s -> getPony(s, null), skin), skin);
         return skin == null ? Optional.empty() : Optional.of(getPony(skin, null));
     }
 

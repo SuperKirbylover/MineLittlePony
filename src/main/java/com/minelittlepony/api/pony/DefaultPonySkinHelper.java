@@ -6,16 +6,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import com.minelittlepony.api.pony.meta.Race;
-import com.minelittlepony.client.MineLittlePony;
 
 import java.util.*;
 import java.util.function.Function;
 
 public final class DefaultPonySkinHelper {
-    public static final Identifier STEVE = MineLittlePony.id("textures/entity/player/wide/steve_pony.png");
+    public static final Identifier STEVE = id("textures/entity/player/wide/steve_pony.png");
 
-    public static final Identifier SEAPONY_SKIN_TYPE_ID = MineLittlePony.id("seapony");
-    public static final Identifier NIRIK_SKIN_TYPE_ID = MineLittlePony.id("nirik");
+    public static final Identifier SEAPONY_SKIN_TYPE_ID = id("seapony");
+    public static final Identifier NIRIK_SKIN_TYPE_ID = id("nirik");
 
     private static final Function<SkinTextures, SkinTextures> SKINS = Util.memoize(original -> new SkinTextures(
             new Identifier("minelittlepony", original.texture().getPath().replace(".png", "_pony.png")),
@@ -25,6 +24,10 @@ public final class DefaultPonySkinHelper {
             original.model(),
             false
     ));
+
+    public static Identifier id(String name) {
+        return new Identifier("minelittlepony", name);
+    }
 
     public static SkinTextures getTextures(SkinTextures original) {
         return SKINS.apply(original);

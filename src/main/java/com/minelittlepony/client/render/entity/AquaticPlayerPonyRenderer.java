@@ -5,16 +5,19 @@ import com.minelittlepony.api.pony.*;
 import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.util.MathUtil;
 
+import java.util.function.Predicate;
+
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.util.Identifier;
 
 public class AquaticPlayerPonyRenderer extends FormChangingPlayerPonyRenderer {
 
-    public AquaticPlayerPonyRenderer(EntityRendererFactory.Context context, boolean slim) {
-        super(context, slim, DefaultPonySkinHelper.SEAPONY_SKIN_TYPE_ID, PonyPosture::isSeaponyModifier);
+    public AquaticPlayerPonyRenderer(EntityRendererFactory.Context context, boolean slim, Identifier alternateFormSkinId, Predicate<AbstractClientPlayerEntity> formModifierPredicate) {
+        super(context, slim, alternateFormSkinId, formModifierPredicate);
     }
 
     @Override
@@ -32,12 +35,12 @@ public class AquaticPlayerPonyRenderer extends FormChangingPlayerPonyRenderer {
     @Override
     protected Race getPlayerRace(AbstractClientPlayerEntity entity, Pony pony) {
         Race race = super.getPlayerRace(entity, pony);
-        return PonyPosture.isSeaponyModifier(entity) ? Race.SEAPONY : race == Race.SEAPONY ? Race.UNICORN : race;
+        return transformed ? Race.SEAPONY : race == Race.SEAPONY ? Race.UNICORN : race;
     }
 
     @Override
     protected void setupTransforms(AbstractClientPlayerEntity player, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale) {
-        if (PonyPosture.isSeaponyModifier(player)) {
+        if (transformed) {
             matrices.translate(0, 0.6 * scale, 0);
             if (player.isInSneakingPose()) {
                 matrices.translate(0, 0.125 * scale, 0);

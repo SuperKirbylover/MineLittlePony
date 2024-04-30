@@ -1,6 +1,7 @@
 package com.minelittlepony.client.compat.hdskins;
 
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 
 import com.minelittlepony.api.model.PreviewModel;
 import com.minelittlepony.api.pony.*;
@@ -20,12 +21,13 @@ class DummyPony extends DummyPlayer implements PreviewModel, PonyManager.ForcedP
     }
 
     @Override
-    public boolean forceSeapony() {
-        return getTextures().getPosture().getActiveSkinType() == MineLPHDSkins.seaponySkinType;
-    }
-
-    @Override
-    public boolean forceNirik() {
-        return getTextures().getPosture().getActiveSkinType() == MineLPHDSkins.nirikSkinType;
+    public Identifier getForm() {
+        if (getTextures().getPosture().getActiveSkinType() == MineLPHDSkins.seaponySkinType) {
+            return PonyForm.SEAPONY;
+        }
+        if (getTextures().getPosture().getActiveSkinType() == MineLPHDSkins.nirikSkinType) {
+            return PonyForm.NIRIK;
+        }
+        return PonyForm.DEFAULT;
     }
 }
