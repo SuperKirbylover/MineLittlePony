@@ -9,6 +9,7 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Hand;
 
 import com.minelittlepony.api.model.MobPosingHelper;
+import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.client.model.entity.race.AlicornModel;
 
 public class SkeleponyModel<T extends HostileEntity> extends AlicornModel<T> {
@@ -58,11 +59,11 @@ public class SkeleponyModel<T extends HostileEntity> extends AlicornModel<T> {
     @Override
     protected void rotateLegs(float move, float swing, float ticks, T entity) {
         super.rotateLegs(move, swing, ticks, entity);
-        if (rightArmPose != ArmPose.EMPTY) {
+        if (rightArmPose != ArmPose.EMPTY && entity.isAttacking()) {
             rotateArmHolding(getArm(Arm.RIGHT), -1, getSwingAmount(), ticks);
         }
 
-        if (leftArmPose != ArmPose.EMPTY) {
+        if (leftArmPose != ArmPose.EMPTY && entity.isAttacking()) {
             rotateArmHolding(getArm(Arm.LEFT), -1, getSwingAmount(), ticks);
         }
     }
@@ -72,8 +73,8 @@ public class SkeleponyModel<T extends HostileEntity> extends AlicornModel<T> {
     }
 
     @Override
-    public boolean hasMagic() {
-        return isUnicorn;
+    public Race getRace() {
+        return isUnicorn ? super.getRace() : Race.EARTH;
     }
 
     @Override
