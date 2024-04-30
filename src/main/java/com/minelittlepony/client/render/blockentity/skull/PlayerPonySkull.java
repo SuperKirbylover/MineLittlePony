@@ -7,7 +7,6 @@ import com.minelittlepony.api.pony.SkinsProxy;
 import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.client.model.*;
 import com.minelittlepony.client.render.blockentity.skull.PonySkullRenderer.ISkull;
-import com.mojang.authlib.GameProfile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +14,7 @@ import java.util.Map;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 
@@ -35,17 +35,17 @@ public class PlayerPonySkull implements ISkull {
     }
 
     @Override
-    public Identifier getSkinResource(@Nullable GameProfile profile) {
-        renderingEars = profile != null && "deadmau5".equals(profile.getName());
+    public Identifier getSkinResource(@Nullable ProfileComponent profile) {
+        renderingEars = profile != null && "deadmau5".equals(profile.gameProfile().getName());
 
         if (profile != null) {
-            Identifier skin = SkinsProxy.instance.getSkinTexture(profile);
+            Identifier skin = SkinsProxy.instance.getSkinTexture(profile.gameProfile());
 
             if (skin != null) {
                 return skin;
             }
 
-            return DefaultSkinHelper.getSkinTextures(profile).texture();
+            return DefaultSkinHelper.getSkinTextures(profile.gameProfile()).texture();
         }
 
         return DefaultSkinHelper.getTexture();

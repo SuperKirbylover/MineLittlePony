@@ -4,7 +4,6 @@ import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.client.model.AbstractPonyModel;
 import com.minelittlepony.client.render.PonyRenderContext;
-import com.mojang.authlib.GameProfile;
 
 import java.util.Map;
 
@@ -19,6 +18,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -26,8 +26,6 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
 import net.minecraft.village.VillagerDataContainer;
 
 public class SkullFeature<T extends LivingEntity, M extends EntityModel<T> & PonyModel<T>> extends AbstractPonyFeature<T, M> {
@@ -87,20 +85,10 @@ public class SkullFeature<T extends LivingEntity, M extends EntityModel<T> & Pon
             stack.translate(0, 0.0625F, 0);
         }
 
-        GameProfile profile = null;
-
-        if (itemstack.hasNbt()) {
-            NbtCompound nbt = itemstack.getNbt();
-
-            if (nbt.contains("SkullOwner", 10)) {
-                profile = NbtHelper.toGameProfile(nbt.getCompound("SkullOwner"));
-            }
-        }
-
         stack.translate(-0.5, 0, -0.5);
         SkullType type = ((AbstractSkullBlock) ((BlockItem) itemstack.getItem()).getBlock()).getSkullType();
         SkullBlockEntityModel skullBlockEntityModel = (SkullBlockEntityModel)this.headModels.get(type);
-        RenderLayer renderLayer = SkullBlockEntityRenderer.getRenderLayer(type, profile);
+        RenderLayer renderLayer = SkullBlockEntityRenderer.getRenderLayer(type, itemstack.get(DataComponentTypes.PROFILE));
 
         SkullBlockEntityRenderer.renderSkull(null, 180, f, stack, renderContext, lightUv, skullBlockEntityModel, renderLayer);
     }

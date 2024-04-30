@@ -7,13 +7,13 @@ import com.minelittlepony.client.model.AbstractPonyModel;
 import com.minelittlepony.client.render.MobRenderers;
 import com.minelittlepony.client.render.blockentity.skull.PonySkullRenderer.ISkull;
 import com.minelittlepony.mson.api.ModelKey;
-import com.mojang.authlib.GameProfile;
 
 import java.util.function.Supplier;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 
@@ -38,7 +38,7 @@ public class MobSkull implements ISkull {
     }
 
     @Override
-    public Identifier getSkinResource(@Nullable GameProfile profile) {
+    public Identifier getSkinResource(@Nullable ProfileComponent profile) {
         return texture;
     }
 

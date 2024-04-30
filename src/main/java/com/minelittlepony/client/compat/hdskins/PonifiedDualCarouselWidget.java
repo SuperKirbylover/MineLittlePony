@@ -35,7 +35,7 @@ class PonifiedDualCarouselWidget extends DualCarouselWidget {
             return super.getDefaultSkin(SkinType.SKIN, modelVariant);
         }
 
-        Wearable wearable = MineLPHDSkins.wearableTypes.getOrDefault(type, Wearable.NONE);
+        Wearable wearable = MineLPHDSkins.WEARABLE_TYPES.getOrDefault(type, Wearable.NONE);
 
         if (wearable != Wearable.NONE) {
             return NativeImageFilters.GREYSCALE.load(wearable.getDefaultTexture(), wearable.getDefaultTexture(), getExclusion());

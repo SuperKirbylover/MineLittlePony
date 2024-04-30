@@ -9,5 +9,3 @@ accessible          method   net/minecraft/client/render/RenderLayer            
 accessible          method   net/minecraft/client/render/RenderLayer$MultiPhase    getPhases    ()Lnet/minecraft/client/render/RenderLayer$MultiPhaseParameters;
 accessible          method   net/minecraft/client/render/RenderPhase$TextureBase   getId        ()Ljava/util/Optional;
 accessible          field    net/minecraft/client/render/RenderLayer$MultiPhaseParameters       texture     Lnet/minecraft/client/render/RenderPhase$TextureBase;
-
-accessible          method   net/minecraft/block/entity/SkullBlockEntity           fetchProfile (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;

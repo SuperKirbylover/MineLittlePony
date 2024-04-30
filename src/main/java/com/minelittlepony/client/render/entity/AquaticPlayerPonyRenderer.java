@@ -36,14 +36,14 @@ public class AquaticPlayerPonyRenderer extends FormChangingPlayerPonyRenderer {
     }
 
     @Override
-    protected void setupTransforms(AbstractClientPlayerEntity player, MatrixStack stack, float ageInTicks, float rotationYaw, float partialTicks) {
+    protected void setupTransforms(AbstractClientPlayerEntity player, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale) {
         if (PonyPosture.isSeaponyModifier(player)) {
-            stack.translate(0, 0.6, 0);
+            matrices.translate(0, 0.6 * scale, 0);
             if (player.isInSneakingPose()) {
-                stack.translate(0, 0.125, 0);
+                matrices.translate(0, 0.125 * scale, 0);
             }
         }
-        super.setupTransforms(player, stack, ageInTicks, rotationYaw, partialTicks);
+        super.setupTransforms(player, matrices, animationProgress, bodyYaw, tickDelta, scale);
     }
 
     @Override

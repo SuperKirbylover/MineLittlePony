@@ -9,7 +9,6 @@ import com.minelittlepony.client.render.PonyRenderDispatcher;
 import com.minelittlepony.common.client.gui.VisibilityMode;
 import com.minelittlepony.common.client.gui.element.Button;
 import com.minelittlepony.common.client.gui.sprite.TextureSprite;
-import com.minelittlepony.common.event.ClientReadyCallback;
 import com.minelittlepony.common.event.ScreenInitCallback;
 import com.minelittlepony.common.event.SkinFilterCallback;
 import com.minelittlepony.common.util.GamePaths;
@@ -48,6 +47,7 @@ public class MineLittlePony implements ClientModInitializer {
     private final KeyBinding keyBinding = new KeyBinding("key.minelittlepony.settings", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_F9, "key.categories.misc");
 
     private final PonyRenderDispatcher renderDispatcher = new PonyRenderDispatcher();
+    private boolean initialized;
 
     private boolean hasHdSkins;
     private boolean hasModMenu;
@@ -61,6 +61,10 @@ public class MineLittlePony implements ClientModInitializer {
      */
     public static MineLittlePony getInstance() {
         return instance;
+    }
+
+    public static Identifier id(String name) {
+        return new Identifier("minelittlepony", name);
     }
 
     @Override
@@ -81,11 +85,7 @@ public class MineLittlePony implements ClientModInitializer {
         SkinFilterCallback.EVENT.register(new LegacySkinConverter());
 
         // general events
-        ClientReadyCallback.Handler.register();
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
-        ClientReadyCallback.EVENT.register(client -> {
-            renderDispatcher.initialise(client.getEntityRenderDispatcher(), false);
-        });
         ScreenInitCallback.EVENT.register(this::onScreenInit);
 
         config.load();
@@ -97,6 +97,10 @@ public class MineLittlePony implements ClientModInitializer {
     }
 
     private void onTick(MinecraftClient client) {
+        if (!initialized) {
+            initialized = true;
+            renderDispatcher.initialise(client.getEntityRenderDispatcher(), false);
+        }
 
         boolean inGame = client.world != null && client.player != null && client.currentScreen == null;
         boolean mainMenu = client.currentScreen instanceof TitleScreen;

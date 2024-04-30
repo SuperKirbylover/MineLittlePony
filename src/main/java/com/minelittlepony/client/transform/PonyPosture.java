@@ -64,7 +64,7 @@ public interface PonyPosture {
                         }
                     }
 
-                    float roll = (float)player.getRoll() + tickDelta;
+                    float roll = (float)player.getFallFlyingTicks() + tickDelta;
                     float targetRoll = MathHelper.clamp(roll * roll / 100F, 0, 1);
                     if (!player.isUsingRiptide()) {
                         stack.multiply(RotationAxis.NEGATIVE_X.rotationDegrees(targetRoll * (-90 - player.getPitch())));

@@ -64,7 +64,7 @@ public class SeaponyRenderer extends GuardianEntityRenderer {
     }
 
     @Override
-    protected void setupTransforms(GuardianEntity entity, MatrixStack stack, float ageInTicks, float rotationYaw, float partialTicks) {
-        ponyRenderer.manager.setupTransforms(entity, stack, ageInTicks, rotationYaw, partialTicks);
+    protected void setupTransforms(GuardianEntity entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale) {
+        ponyRenderer.manager.setupTransforms(entity, stack, animationProgress, bodyYaw, tickDelta, scale);
     }
 }

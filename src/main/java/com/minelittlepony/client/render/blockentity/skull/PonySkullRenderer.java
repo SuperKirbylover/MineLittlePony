@@ -7,7 +7,6 @@ import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.render.MobRenderers;
 import com.minelittlepony.client.render.entity.SkeleponyRenderer;
 import com.minelittlepony.client.render.entity.ZomponyRenderer;
-import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.SkullBlock;
 import net.minecraft.client.render.OverlayTexture;
@@ -15,6 +14,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -43,7 +43,7 @@ public class PonySkullRenderer {
         skullMap.put(SkullBlock.Type.PLAYER, new PlayerPonySkull());
     }
 
-    public static RenderLayer getSkullRenderLayer(SkullBlock.SkullType skullType, @Nullable GameProfile profile) {
+    public static RenderLayer getSkullRenderLayer(SkullBlock.SkullType skullType, @Nullable ProfileComponent profile) {
         selectedSkull = null;
         selectedSkin = null;
 
@@ -109,7 +109,7 @@ public class PonySkullRenderer {
 
         boolean canRender(PonyConfig config);
 
-        Identifier getSkinResource(@Nullable GameProfile profile);
+        Identifier getSkinResource(@Nullable ProfileComponent profile);
 
         boolean bindPony(Pony pony);
     }

@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class PlayerTextureSupplier {
     public static <T extends LivingEntity> TextureSupplier<T> create(TextureSupplier<T> fallback) {
         Function<String, CompletableFuture<Identifier>> customNameCache = Util.memoize(name -> {
-            return SkullBlockEntity.fetchProfile(name).thenApply(profile -> {
+            return SkullBlockEntity.fetchProfileByName(name).thenApply(profile -> {
                 return profile
                         .map(p -> SkinsProxy.instance.getSkinTexture(p))
                         .filter(skin -> !Pony.getManager().getPony(skin).race().isHuman())

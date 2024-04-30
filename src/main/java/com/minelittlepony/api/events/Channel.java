@@ -4,10 +4,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.*;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,8 +18,6 @@ import com.minelittlepony.api.pony.PonyData;
 
 @Environment(EnvType.CLIENT)
 public class Channel {
-    private static final Identifier CLIENT_PONY_DATA = new Identifier("minelittlepony", "pony_data");
-    private static final Identifier REQUEST_PONY_DATA = new Identifier("minelittlepony", "request_pony_data");
     private static final Logger LOGGER = LogManager.getLogger("MineLittlePony:Networking");
 
     private static boolean registered;
@@ -27,20 +26,24 @@ public class Channel {
         ClientLoginConnectionEvents.INIT.register((handler, client) -> {
            registered = false;
         });
+
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             LOGGER.info("Sending consent packet to " + handler.getPlayer().getName().getString());
-
-            sender.sendPacket(REQUEST_PONY_DATA, PacketByteBufs.empty());
+            sender.sendPacket(PonyDataRequest.INSTANCE);
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(REQUEST_PONY_DATA, (client, handler, ignored, sender) -> {
+        PayloadTypeRegistry.playS2C().register(PonyDataRequest.ID, PonyDataRequest.CODEC);
+        PayloadTypeRegistry.playS2C().register(PonyDataPayload.ID, PonyDataPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(PonyDataPayload.ID, PonyDataPayload.CODEC);
+
+        ClientPlayNetworking.registerGlobalReceiver(PonyDataRequest.ID, (packet, context) -> {
             registered = true;
             LOGGER.info("Server has just consented");
         });
-        ServerPlayNetworking.registerGlobalReceiver(CLIENT_PONY_DATA, (server, player, ignore, buffer, ignore2) -> {
-            PonyData packet = MsgPonyData.read(buffer);
-            server.execute(() -> {
-                PonyDataCallback.EVENT.invoker().onPonyDataAvailable(player, packet, EnvType.SERVER);
+
+        ServerPlayNetworking.registerGlobalReceiver(PonyDataPayload.ID, (packet, context) -> {
+            context.player().server.execute(() -> {
+                PonyDataCallback.EVENT.invoker().onPonyDataAvailable(context.player(), packet.data(), EnvType.SERVER);
             });
         });
     }
@@ -57,7 +60,31 @@ public class Channel {
             throw new RuntimeException("Client packet send called by the server");
         }
 
-        ClientPlayNetworking.send(CLIENT_PONY_DATA, MsgPonyData.write(packet, PacketByteBufs.create()));
+        ClientPlayNetworking.send(new PonyDataPayload(packet));
         return true;
+    }
+
+    record PonyDataPayload(PonyData data) implements CustomPayload {
+        public static final Id<PonyDataPayload> ID = new Id<>(new Identifier("minelittlepony", "pony_data"));
+        public static final PacketCodec<PacketByteBuf, PonyDataPayload> CODEC = CustomPayload.codecOf(
+                (p, buffer) -> MsgPonyData.write(p.data(), buffer),
+                buffer -> new PonyDataPayload(MsgPonyData.read(buffer))
+        );
+
+        @Override
+        public Id<PonyDataPayload> getId() {
+            return ID;
+        }
+    }
+
+    record PonyDataRequest() implements CustomPayload {
+        public static final PonyDataRequest INSTANCE = new PonyDataRequest();
+        private static final Id<PonyDataRequest> ID = new Id<>(new Identifier("minelittlepony", "request_pony_data"));
+        public static final PacketCodec<PacketByteBuf, PonyDataRequest> CODEC = PacketCodec.unit(INSTANCE);
+
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return ID;
+        }
     }
 }

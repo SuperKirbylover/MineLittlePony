@@ -27,6 +27,7 @@ import net.minecraft.client.render.entity.feature.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
+import net.minecraft.util.math.Vec3d;
 
 public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRenderContext<AbstractClientPlayerEntity, ClientPonyModel<AbstractClientPlayerEntity>> {
     private final Function<Race, Models<AbstractClientPlayerEntity, ClientPonyModel<AbstractClientPlayerEntity>>> modelsCache;
@@ -70,7 +71,9 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
     @Override
     protected void scale(AbstractClientPlayerEntity entity, MatrixStack stack, float tickDelta) {
         if (manager.getModels().body().getAttributes().isSitting && entity.hasVehicle()) {
-            stack.translate(0, entity.getRidingOffset(entity.getVehicle()), 0);
+            // TODO: Check this
+            Vec3d attachmentPos = entity.getVehicleAttachmentPos(entity.getVehicle());
+            stack.translate(attachmentPos.getX(), attachmentPos.getY(), attachmentPos.getZ());
         }
     }
 
@@ -102,8 +105,8 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
     }
 
     @Override
-    protected void setupTransforms(AbstractClientPlayerEntity entity, MatrixStack stack, float ageInTicks, float rotationYaw, float partialTicks) {
-        manager.setupTransforms(entity, stack, ageInTicks, rotationYaw, partialTicks);
+    protected void setupTransforms(AbstractClientPlayerEntity entity, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale) {
+        manager.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta, scale);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
     }
 
     @Override
-    protected void renderLabelIfPresent(AbstractClientPlayerEntity entity, Text name, MatrixStack stack, VertexConsumerProvider renderContext, int maxDistance) {
+    protected void renderLabelIfPresent(AbstractClientPlayerEntity entity, Text name, MatrixStack stack, VertexConsumerProvider renderContext, int light, float tickDelta) {
         stack.push();
 
         if (entity.isSleeping()) {
@@ -127,7 +130,7 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
             }
         }
         stack.translate(0, manager.getNamePlateYOffset(entity), 0);
-        super.renderLabelIfPresent(entity, name, stack, renderContext, maxDistance);
+        super.renderLabelIfPresent(entity, name, stack, renderContext, light, tickDelta);
         stack.pop();
     }
 

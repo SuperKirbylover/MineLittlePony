@@ -33,11 +33,11 @@ public class ZomponyVillagerRenderer extends AbstractNpcRenderer<ZombieVillagerE
     }
 
     @Override
-    protected void setupTransforms(ZombieVillagerEntity entity, MatrixStack stack, float move, float rotationYaw, float ticks) {
+    protected void setupTransforms(ZombieVillagerEntity entity, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale) {
         if (entity.isConverting()) {
-            rotationYaw += (float) (Math.cos(entity.age * 3.25D) * (Math.PI / 4));
+            bodyYaw += (float) (Math.cos(entity.age * 3.25D) * (Math.PI / 4));
         }
 
-        super.setupTransforms(entity, stack, move, rotationYaw, ticks);
+        super.setupTransforms(entity, matrices, animationProgress, bodyYaw, tickDelta, scale);
     }
 }

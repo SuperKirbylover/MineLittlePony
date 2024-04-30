@@ -6,11 +6,11 @@ import com.minelittlepony.api.pony.*;
 import com.minelittlepony.api.pony.meta.Wearable;
 import com.minelittlepony.common.client.gui.ScrollContainer;
 import com.minelittlepony.common.client.gui.element.Button;
-import com.minelittlepony.common.event.ClientReadyCallback;
 import com.minelittlepony.hdskins.client.*;
 import com.minelittlepony.hdskins.client.gui.GuiSkins;
 import com.minelittlepony.hdskins.client.gui.player.DummyPlayer;
 import com.minelittlepony.hdskins.client.gui.player.skins.PlayerSkins.PlayerSkin;
+import com.minelittlepony.hdskins.client.profile.SkinLoader.ProvidedSkins;
 import com.minelittlepony.hdskins.profile.SkinType;
 
 import com.mojang.authlib.GameProfile;
@@ -37,7 +37,7 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
     static SkinType seaponySkinType;
     static SkinType nirikSkinType;
 
-    static final Map<SkinType, Wearable> wearableTypes = new HashMap<>();
+    static final Map<SkinType, Wearable> WEARABLE_TYPES = new HashMap<>();
 
     @Override
     public void onInitializeClient() {
@@ -48,17 +48,17 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
         nirikSkinType = SkinType.register(DefaultPonySkinHelper.NIRIK_SKIN_TYPE_ID, Items.LAVA_BUCKET.getDefaultStack());
         Wearable.REGISTRY.values().forEach(wearable -> {
             if (wearable != Wearable.NONE) {
-                wearableTypes.put(SkinType.register(wearable.getId(), Items.BUNDLE.getDefaultStack()), wearable);
+                WEARABLE_TYPES.put(SkinType.register(wearable.getId(), Items.BUNDLE.getDefaultStack()), wearable);
             }
         });
 
-        ClientReadyCallback.EVENT.register(client -> {
-            // Clear ponies when skins are cleared
-            SkinCacheClearCallback.EVENT.register(MineLittlePony.getInstance().getManager()::clearCache);
-
-            // Ponify the skins GUI.
-            GuiSkins.setSkinsGui(GuiSkinsMineLP::new);
+        // Clear ponies when skins are cleared
+        SkinCacheClearCallback.EVENT.register(() -> {
+            MineLittlePony.getInstance().getManager().clearCache();
         });
+
+        // Ponify the skins GUI.
+        GuiSkins.setSkinsGui(GuiSkinsMineLP::new);
 
         HDSkins.getInstance().getSkinPrioritySorter().addSelector((skinType, playerSkins) -> {
             if (skinType == SkinType.SKIN && PonyConfig.getInstance().mixedHumanSkins.get()) {
@@ -75,7 +75,7 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
         });
     }
 
-    static Optional<Pony> getPony(PlayerSkins.Layer layer) {
+    static Optional<Pony> getPony(PlayerSkinLayers.Layer layer) {
         return layer
             .getSkin(SkinType.SKIN)
             .map(Pony.getManager()::getPony);
@@ -103,8 +103,9 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
 
         if (entity instanceof AbstractClientPlayerEntity player) {
             return PlayerSkins.of(player)
-                    .map(PlayerSkins::combined)
-                    .map(PlayerSkins.Layer::getProvidedSkinTypes)
+                    .map(PlayerSkins::layers)
+                    .map(PlayerSkinLayers::combined)
+                    .map(PlayerSkinLayers.Layer::getProvidedSkinTypes)
                     .orElseGet(Set::of);
         }
 
@@ -132,13 +133,17 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
             }
         }
 
-        return Optional.of(player).flatMap(PlayerSkins::of).map(PlayerSkins::combined).flatMap(skins -> skins.getSkin(type));
+        return Optional.of(player)
+                .flatMap(PlayerSkins::of)
+                .map(PlayerSkins::layers)
+                .map(PlayerSkinLayers::combined)
+                .flatMap(skins -> skins.getSkin(type));
     }
 
     @Override
     public Identifier getSkinTexture(GameProfile profile) {
         return HDSkins.getInstance().getProfileRepository()
-                .getNow(profile)
+                .load(profile).getNow(ProvidedSkins.EMPTY)
                 .getSkin(SkinType.SKIN)
                 .orElseGet(() -> super.getSkinTexture(profile));
     }

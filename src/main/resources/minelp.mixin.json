@@ -12,6 +12,7 @@
         "MixinSkullBlockEntityRenderer",
         "MixinHeldItemRenderer",
         "MixinClientPlayerEntity",
+        "MixinLivingEntity",
         "MixinPlayerMoveC2SPacket",
         "MixinPlayerPositionLookS2CPacket",
         "MixinVertextConsumers",

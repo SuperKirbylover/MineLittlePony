@@ -8,6 +8,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.util.math.Direction;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.minelittlepony.client.render.blockentity.skull.PonySkullRenderer;
-import com.mojang.authlib.GameProfile;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +46,9 @@ abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<Skul
 
     @Inject(method = "getRenderLayer("
             + "Lnet/minecraft/block/SkullBlock$SkullType;"
-            + "Lcom/mojang/authlib/GameProfile;"
+            + "Lnet/minecraft/component/type/ProfileComponent;"
             + ")Lnet/minecraft/client/render/RenderLayer;", at = @At("HEAD"), cancellable = true)
-    private static void onGetRenderLayer(SkullBlock.SkullType skullType, @Nullable GameProfile profile, CallbackInfoReturnable<RenderLayer> info) {
+    private static void onGetRenderLayer(SkullBlock.SkullType skullType, @Nullable ProfileComponent profile, CallbackInfoReturnable<RenderLayer> info) {
         if (!info.isCancelled()) {
             RenderLayer result = PonySkullRenderer.getSkullRenderLayer(skullType, profile);
             if (result != null) {

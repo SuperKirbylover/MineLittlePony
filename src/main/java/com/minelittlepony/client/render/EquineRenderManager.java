@@ -86,7 +86,7 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
         }
     }
 
-    public void setupTransforms(T entity, MatrixStack stack, float ageInTicks, float rotationYaw, float tickDelta) {
+    public void setupTransforms(T entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale) {
         float s = getScaleFactor();
         stack.scale(s, s, s);
 
@@ -109,10 +109,10 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
             }
         }
 
-        rotationYaw = getMountedYaw(entity, rotationYaw, tickDelta);
-        transformer.setupTransforms(entity, stack, ageInTicks, rotationYaw, tickDelta);
+        bodyYaw = getMountedYaw(entity, bodyYaw, tickDelta);
+        transformer.setupTransforms(entity, stack, animationProgress, bodyYaw, tickDelta, scale);
 
-        PonyPosture.of(getModels().body().getAttributes()).apply(entity, getModels().body(), stack, rotationYaw, tickDelta, 1);
+        PonyPosture.of(getModels().body().getAttributes()).apply(entity, getModels().body(), stack, bodyYaw, tickDelta, 1);
     }
 
     private void translateRider(T entity, Pony pony, LivingEntity passenger, Pony passengerPony, MatrixStack stack, float tickDelta) {
@@ -168,7 +168,7 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
     }
 
     public interface Transformer<T extends LivingEntity> {
-        void setupTransforms(T entity, MatrixStack stack, float ageInTicks, float rotationYaw, float partialTicks);
+        void setupTransforms(T entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale);
     }
 
     public interface RegistrationHandler {

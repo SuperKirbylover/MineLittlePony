@@ -27,6 +27,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 
 public abstract class AbstractPonyRenderer<T extends MobEntity, M extends EntityModel<T> & PonyModel<T> & ModelWithArms> extends MobEntityRenderer<T, M> implements PonyRenderContext<T, M> {
 
@@ -74,8 +75,8 @@ public abstract class AbstractPonyRenderer<T extends MobEntity, M extends Entity
     }
 
     @Override
-    protected void setupTransforms(T entity, MatrixStack stack, float ageInTicks, float rotationYaw, float partialTicks) {
-        manager.setupTransforms(entity, stack, ageInTicks, rotationYaw, partialTicks);
+    protected void setupTransforms(T entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale) {
+        manager.setupTransforms(entity, stack, animationProgress, bodyYaw, tickDelta, scale);
     }
 
     @Override
@@ -94,18 +95,20 @@ public abstract class AbstractPonyRenderer<T extends MobEntity, M extends Entity
         if (!entity.hasVehicle()) {
             stack.translate(0, 0, -entity.getWidth() / 2); // move us to the center of the shadow
         } else {
-            stack.translate(0, entity.getRidingOffset(entity.getVehicle()), 0);
+            // TODO: Check this
+            Vec3d attachmentPos = entity.getVehicleAttachmentPos(entity.getVehicle());
+            stack.translate(attachmentPos.getX(), attachmentPos.getY(), attachmentPos.getZ());
         }
 
         stack.scale(scale, scale, scale);
     }
 
     @Override
-    protected void renderLabelIfPresent(T entity, Text name, MatrixStack stack, VertexConsumerProvider renderContext, int maxDistance) {
-        stack.push();
-        stack.translate(0, manager.getNamePlateYOffset(entity), 0);
-        super.renderLabelIfPresent(entity, name, stack, renderContext, maxDistance);
-        stack.pop();
+    protected void renderLabelIfPresent(T entity, Text name, MatrixStack matrices, VertexConsumerProvider vertices, int light, float tickDelta) {
+        matrices.push();
+        matrices.translate(0, manager.getNamePlateYOffset(entity), 0);
+        super.renderLabelIfPresent(entity, name, matrices, vertices, light, tickDelta);
+        matrices.pop();
     }
 
     @Override

@@ -2,11 +2,12 @@ package com.minelittlepony.client.model.armour;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.TextureManager;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import com.google.common.base.Strings;
@@ -48,7 +49,7 @@ public class ArmourTextureResolver {
 
     public Identifier getTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, ArmourLayer layer,  @Nullable String type) {
         Identifier material = stack.getItem() instanceof ArmorItem armor
-                ? new Identifier(armor.getMaterial().getName())
+                ? armor.getMaterial().getKey().get().getValue()
                 : Registries.ITEM.getId(stack.getItem());
         String custom = getCustom(stack);
 
@@ -79,8 +80,9 @@ public class ArmourTextureResolver {
     }
 
     private String getCustom(ItemStack stack) {
-        if (stack.hasNbt() && stack.getNbt().contains("CustomModelData", NbtElement.NUMBER_TYPE)) {
-            return "custom_" + stack.getNbt().getInt("CustomModelData");
+        CustomModelDataComponent customModelData = stack.get(DataComponentTypes.CUSTOM_MODEL_DATA);
+        if (customModelData != null) {
+            return "custom_" + customModelData.value();
         }
         return "none";
     }

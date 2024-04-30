@@ -52,10 +52,10 @@ public class PonyStandRenderer extends ArmorStandEntityRenderer {
     }
 
     @Override
-    protected void setupTransforms(ArmorStandEntity entity, MatrixStack stack, float f, float g, float h) {
-        super.setupTransforms(entity, stack, f, g, h);
+    protected void setupTransforms(ArmorStandEntity entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale) {
+        super.setupTransforms(entity, stack, animationProgress, bodyYaw, tickDelta, scale);
         if (isPonita(entity)) {
-            stack.translate(0, 0, -4/16F);
+            stack.translate(0, 0, scale * -4/16F);
         }
     }
 

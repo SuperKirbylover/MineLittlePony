@@ -1,7 +1,6 @@
 package com.minelittlepony.client.mixin;
 
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
 
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,12 +13,12 @@ import com.minelittlepony.api.model.RenderPass;
 @Mixin(GameRenderer.class)
 abstract class MixinGameRenderer {
     @Inject(method = "renderWorld", at = @At("HEAD"))
-    private void beforeRenderWorld(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo info) {
+    private void beforeRenderWorld(float tickDelta, long limitTime, CallbackInfo info) {
         RenderPass.swap(RenderPass.WORLD);
     }
 
     @Inject(method = "renderWorld", at = @At("RETURN"))
-    private void afterRenderWorld(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo info) {
+    private void afterRenderWorld(float tickDelta, long limitTime, CallbackInfo info) {
         RenderPass.swap(RenderPass.GUI);
     }
 }
@@ -31,7 +30,14 @@ abstract class MixinWorldRenderer {
             target = "net.minecraft.client.render.VertexConsumerProvider$Immediate.drawCurrentLayer()V",
             ordinal = 0
     ))
-    private void onRender(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo info) {
+    private void onRender(      float tickDelta,
+            long limitTime,
+            boolean renderBlockOutline,
+            Camera camera,
+            GameRenderer gameRenderer,
+            LightmapTextureManager lightmapTextureManager,
+            Matrix4f matrix4f,
+            Matrix4f matrix4f2, CallbackInfo info) {
         RenderPass.swap(RenderPass.HUD);
     }
 }
