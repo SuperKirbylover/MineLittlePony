@@ -27,7 +27,6 @@ import net.minecraft.client.render.entity.feature.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
-import net.minecraft.util.math.Vec3d;
 
 public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRenderContext<AbstractClientPlayerEntity, ClientPonyModel<AbstractClientPlayerEntity>> {
     private final Function<Race, Models<AbstractClientPlayerEntity, ClientPonyModel<AbstractClientPlayerEntity>>> modelsCache;
@@ -71,10 +70,9 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
     @Override
     protected void scale(AbstractClientPlayerEntity entity, MatrixStack stack, float tickDelta) {
         if (manager.getModels().body().getAttributes().isSitting && entity.hasVehicle()) {
-            // TODO: Check this
-            Vec3d attachmentPos = entity.getVehicleAttachmentPos(entity.getVehicle());
-            stack.translate(attachmentPos.getX(), attachmentPos.getY(), attachmentPos.getZ());
+            stack.translate(0, -0.25F * manager.getScaleFactor(), 0);
         }
+        super.scale(entity, stack, tickDelta);
     }
 
     @Override

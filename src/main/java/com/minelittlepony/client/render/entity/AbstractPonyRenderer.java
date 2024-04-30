@@ -27,7 +27,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 
 public abstract class AbstractPonyRenderer<T extends MobEntity, M extends EntityModel<T> & PonyModel<T> & ModelWithArms> extends MobEntityRenderer<T, M> implements PonyRenderContext<T, M> {
 
@@ -95,9 +94,9 @@ public abstract class AbstractPonyRenderer<T extends MobEntity, M extends Entity
         if (!entity.hasVehicle()) {
             stack.translate(0, 0, -entity.getWidth() / 2); // move us to the center of the shadow
         } else {
-            // TODO: Check this
-            Vec3d attachmentPos = entity.getVehicleAttachmentPos(entity.getVehicle());
-            stack.translate(attachmentPos.getX(), attachmentPos.getY(), attachmentPos.getZ());
+            if (manager.getModels().body().getAttributes().isSitting && entity.hasVehicle()) {
+                stack.translate(0, 0.25F, 0);
+            }
         }
 
         stack.scale(scale, scale, scale);

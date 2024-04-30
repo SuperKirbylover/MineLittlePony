@@ -61,7 +61,7 @@ public class ModelAttributes {
      */
     public boolean isLeftHanded;
     /**
-     * True if the model is sitting as in boats.
+     * True if the model is riding on the back of another pony.
      */
     public boolean isRidingInteractive;
     /**

@@ -204,14 +204,9 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
     }
 
     protected void ponySit() {
-        adjustBodyComponents(BODY_RIDING_PITCH * (attributes.isRidingInteractive ? 2 : 1), BODY_RIDING);
-        if (attributes.isRidingInteractive) {
-            neck.setPivot(NECK_X, 0, -4);
-            head.setPivot(0, -2, -5);
-        } else {
-            neck.setPivot(NECK_X, 0, 0);
-            head.setPivot(0, 0, 0);
-        }
+        adjustBodyComponents(BODY_RIDING_PITCH, BODY_RIDING);
+        neck.setPivot(NECK_X, 0, 0);
+        head.setPivot(0, 0, 0);
 
         leftLeg.pivotZ = 14;
         leftLeg.pivotY = 17;
@@ -231,26 +226,6 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
         leftArm.pitch += body.pitch;
         rightArm.roll = MathHelper.PI * 0.06f;
         rightArm.pitch += body.pitch;
-
-        if (attributes.isRidingInteractive) {
-            leftLeg.yaw = MathHelper.PI / 15;
-            leftLeg.pitch = MathHelper.PI / 9;
-
-            leftLeg.pivotZ = 10;
-            leftLeg.pivotY = 7;
-
-            rightLeg.yaw = -MathHelper.PI / 15;
-            rightLeg.pitch = MathHelper.PI / 9;
-
-            rightLeg.pivotZ = 10;
-            rightLeg.pivotY = 7;
-
-            leftArm.pitch = MathHelper.PI / 6;
-            rightArm.pitch = MathHelper.PI / 6;
-
-            leftArm.roll *= 2;
-            rightArm.roll *= 2;
-        }
     }
 
     /**
@@ -598,10 +573,6 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
 
                 return;
             }
-        }
-
-        if (getAttributes().isRidingInteractive) {
-            matrices.translate(left / 10, -0.2F, -0.5F);
         }
 
         matrices.translate(-left * 0.1F, 0.45F, 0);

@@ -5,7 +5,6 @@ import com.minelittlepony.api.events.Channel;
 import com.minelittlepony.api.events.PonyDataCallback;
 import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.Pony;
-import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.transform.PonyPosture;
 import com.minelittlepony.mson.api.ModelKey;
 import com.minelittlepony.util.MathUtil;
@@ -19,7 +18,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -90,19 +88,6 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
         float s = getScaleFactor();
         stack.scale(s, s, s);
 
-        if (entity.hasVehicle() && entity.getVehicle() instanceof LivingEntity livingVehicles) {
-            PonyRenderContext<LivingEntity, ?> renderer = MineLittlePony.getInstance().getRenderDispatcher().getPonyRenderer(livingVehicles);
-
-            if (renderer != null) {
-                // negate vanilla translations so the rider begins at the ridees feet.
-                stack.translate(0, -livingVehicles.getHeight(), 0);
-                Pony pony = context.getEntityPony(entity);
-                if (!pony.race().isHuman()) {
-                    renderer.getInternalRenderer().translateRider(livingVehicles, renderer.getEntityPony(livingVehicles), entity, pony, stack, tickDelta);
-                }
-            }
-        }
-
         if (entity instanceof PlayerEntity) {
             if (getModels().body().getAttributes().isSitting) {
                 stack.translate(0, 0.125D, 0);
@@ -115,26 +100,11 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
         PonyPosture.of(getModels().body().getAttributes()).apply(entity, getModels().body(), stack, bodyYaw, tickDelta, 1);
     }
 
-    private void translateRider(T entity, Pony pony, LivingEntity passenger, Pony passengerPony, MatrixStack stack, float tickDelta) {
-        if (!passengerPony.race().isHuman()) {
-            float yaw = MathUtil.interpolateDegress((float)entity.prevY, (float)entity.getY(), tickDelta);
-
-            models.applyMetadata(pony.metadata());
-            models.body().transform(BodyPart.BACK, stack);
-
-            PonyPosture.of(models.body().getAttributes()).apply(entity, getModels().body(), stack, yaw, tickDelta, -1);
+    private float getMountedYaw(T entity, float bodyYaw, float tickDelta) {
+        if (entity.hasVehicle() && entity.getVehicle() instanceof LivingEntity mount) {
+            return bodyYaw + MathUtil.interpolateDegress(mount.prevBodyYaw, mount.bodyYaw, tickDelta);
         }
-    }
-
-    private float getMountedYaw(T entity, float rotationYaw, float partialTicks) {
-        if (entity.hasVehicle()) {
-            Entity mount = entity.getVehicle();
-            if (mount instanceof LivingEntity) {
-                return MathUtil.interpolateDegress(((LivingEntity) mount).prevBodyYaw, ((LivingEntity) mount).bodyYaw, partialTicks);
-            }
-        }
-
-        return rotationYaw;
+        return bodyYaw;
     }
 
     public float getScaleFactor() {
