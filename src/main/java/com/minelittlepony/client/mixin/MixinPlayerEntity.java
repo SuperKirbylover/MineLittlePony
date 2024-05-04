@@ -10,19 +10,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.minelittlepony.api.pony.Pony;
 
-@Mixin(LivingEntity.class)
-abstract class MixinLivingEntity {
+@Mixin(PlayerEntity.class)
+abstract class MixinPlayerEntity {
     @Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
     private void onGetBaseDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> info) {
-        if (((Object)this) instanceof PlayerEntity player) {
-            Pony pony = Pony.getManager().getPony(player);
+        Pony pony = Pony.getManager().getPony((PlayerEntity)(Object)this);
 
-            if (!pony.race().isHuman()) {
-                float factor = pony.size().eyeHeightFactor();
-                if (factor != 1) {
-                    EntityDimensions dimensions = info.getReturnValue();
-                    info.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * factor));
-                }
+        if (!pony.race().isHuman()) {
+            float factor = pony.size().eyeHeightFactor();
+            if (factor != 1) {
+                EntityDimensions dimensions = info.getReturnValue();
+                info.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * factor));
             }
         }
     }

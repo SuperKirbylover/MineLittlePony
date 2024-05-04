@@ -53,8 +53,11 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
     @Override
     public Pony getPony(PlayerEntity player) {
         final UUID id = player instanceof ForcedPony ? null : player.getGameProfile() == null ? player.getUuid() : player.getGameProfile().getId();
+        @Nullable
         Identifier skin = getSkin(player);
-        skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(player, s -> getPony(s, id), skin), skin);
+        if (skin != null) {
+            skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(player, s -> getPony(s, id), skin), skin);
+        }
         return getPony(skin, id);
     }
 
@@ -63,8 +66,11 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
         if (entity instanceof PlayerEntity player) {
             return Optional.of(getPony(player));
         }
+        @Nullable
         Identifier skin = getSkin(entity);
-        skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(entity, s -> getPony(s, null), skin), skin);
+        if (skin != null) {
+            skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(entity, s -> getPony(s, null), skin), skin);
+        }
         return skin == null ? Optional.empty() : Optional.of(getPony(skin, null));
     }
 
