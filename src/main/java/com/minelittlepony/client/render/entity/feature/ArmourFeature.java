@@ -51,7 +51,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                     float age, float headYaw, float headPitch,
                     EquipmentSlot armorSlot, ArmourLayer layer, ArmourRendererPlugin plugin) {
 
-        for (ItemStack stack : plugin.getArmorStacks(entity, armorSlot, layer)) {
+        for (ItemStack stack : plugin.getArmorStacks(entity, armorSlot, layer, ArmourRendererPlugin.ArmourType.ARMOUR)) {
             if (stack.isEmpty()) {
                 continue;
             }
@@ -119,5 +119,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                 }
             }
         }
+
+        plugin.onArmourRendered(entity, matrices, provider, armorSlot, layer, ArmourRendererPlugin.ArmourType.ARMOUR);
     }
 }

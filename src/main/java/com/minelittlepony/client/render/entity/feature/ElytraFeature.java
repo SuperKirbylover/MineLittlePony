@@ -35,7 +35,7 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T> & Po
     public void render(MatrixStack matrices, VertexConsumerProvider provider, int light, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
         ArmourRendererPlugin plugin = ArmourRendererPlugin.INSTANCE.get();
 
-        for (ItemStack stack : plugin.getArmorStacks(entity, EquipmentSlot.CHEST, ArmourLayer.OUTER)) {
+        for (ItemStack stack : plugin.getArmorStacks(entity, EquipmentSlot.CHEST, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.ELYTRA)) {
             float alpha = plugin.getElytraAlpha(stack, model, entity);
             if (alpha <= 0) {
                 return;
@@ -56,6 +56,8 @@ public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T> & Po
 
             matrices.pop();
         }
+
+        plugin.onArmourRendered(entity, matrices, provider, EquipmentSlot.BODY, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.ELYTRA);
     }
 
     protected void preRenderCallback(MatrixStack stack) {

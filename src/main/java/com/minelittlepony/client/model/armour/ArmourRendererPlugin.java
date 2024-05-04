@@ -6,6 +6,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -32,7 +33,11 @@ public interface ArmourRendererPlugin {
         return ArmourTextureResolver.INSTANCE;
     }
 
-    default ItemStack[] getArmorStacks(LivingEntity entity, EquipmentSlot armorSlot, ArmourLayer layer) {
+    default void onArmourRendered(LivingEntity entity, MatrixStack matrices, VertexConsumerProvider provider, EquipmentSlot armorSlot, ArmourLayer layer, ArmourType type) {
+
+    }
+
+    default ItemStack[] getArmorStacks(LivingEntity entity, EquipmentSlot armorSlot, ArmourLayer layer, ArmourType type) {
         return new ItemStack[] { entity.getEquippedStack(armorSlot) };
     }
 
@@ -113,5 +118,12 @@ public interface ArmourRendererPlugin {
     @Nullable
     static VertexConsumer getOptionalBuffer(VertexConsumerProvider provider, @Nullable RenderLayer layer) {
         return layer == null ? null : provider.getBuffer(layer);
+    }
+
+    public enum ArmourType {
+        ARMOUR,
+        CAPE,
+        ELYTRA,
+        SKULL
     }
 }

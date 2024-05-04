@@ -44,7 +44,9 @@ public class SkullFeature<T extends LivingEntity, M extends EntityModel<T> & Pon
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider provider, int light, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
-        for (ItemStack stack : ArmourRendererPlugin.INSTANCE.get().getArmorStacks(entity, EquipmentSlot.HEAD, ArmourLayer.OUTER)) {
+        ArmourRendererPlugin plugin = ArmourRendererPlugin.INSTANCE.get();
+
+        for (ItemStack stack : plugin.getArmorStacks(entity, EquipmentSlot.HEAD, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.SKULL)) {
             if (stack.isEmpty()) {
                 continue;
             }
@@ -73,6 +75,8 @@ public class SkullFeature<T extends LivingEntity, M extends EntityModel<T> & Pon
 
             matrices.pop();
         }
+
+        plugin.onArmourRendered(entity, matrices, provider, EquipmentSlot.BODY, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.SKULL);
     }
 
     private void renderBlock(MatrixStack matrices, VertexConsumerProvider provider, T entity, ItemStack stack, int light) {

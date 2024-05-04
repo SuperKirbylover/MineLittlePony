@@ -2,6 +2,7 @@ package com.minelittlepony.client.render.entity.feature;
 
 import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.client.model.ClientPonyModel;
+import com.minelittlepony.client.model.armour.ArmourLayer;
 import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.PonyRenderContext;
 
@@ -11,6 +12,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.math.*;
 
 public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> extends AbstractPonyFeature<AbstractClientPlayerEntity, M> {
@@ -20,26 +22,28 @@ public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> 
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumerProvider provider, int light, AbstractClientPlayerEntity player, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
+    public void render(MatrixStack matrices, VertexConsumerProvider provider, int light, AbstractClientPlayerEntity player, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
         M model = getModelWrapper().body();
 
         if (!player.isInvisible()
             && player.isPartVisible(PlayerModelPart.CAPE)
             && player.getSkinTextures().capeTexture() != null) {
 
-            VertexConsumer vertices = ArmourRendererPlugin.INSTANCE.get().getCapeConsumer(player, provider, player.getSkinTextures().capeTexture());
+            ArmourRendererPlugin plugin = ArmourRendererPlugin.INSTANCE.get();
+
+            VertexConsumer vertices = plugin.getCapeConsumer(player, provider, player.getSkinTextures().capeTexture());
             if (vertices == null) {
                 return;
             }
 
-            stack.push();
+            matrices.push();
 
-            stack.translate(0, 0.24F, 0);
+            matrices.translate(0, 0.24F, 0);
             if (model.getAttributes().isLyingDown) {
-                stack.translate(0, -0.05F, 0);
+                matrices.translate(0, -0.05F, 0);
             }
-            model.transform(BodyPart.BODY, stack);
-            model.getBodyPart(BodyPart.BODY).rotate(stack);
+            model.transform(BodyPart.BODY, matrices);
+            model.getBodyPart(BodyPart.BODY).rotate(matrices);
 
             double capeX = MathHelper.lerp(tickDelta, player.capeX, player.prevCapeX) - MathHelper.lerp(tickDelta, player.prevX, player.getX());
             double capeY = MathHelper.lerp(tickDelta, player.capeY, player.prevCapeY) - MathHelper.lerp(tickDelta, player.prevY, player.getY());
@@ -64,14 +68,16 @@ public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> 
             float camera = MathHelper.lerp(tickDelta, player.prevStrideDistance, player.strideDistance);
             capeMotionY += MathHelper.sin(MathHelper.lerp(tickDelta, player.prevHorizontalSpeed, player.horizontalSpeed) * 6) * 32 * camera;
 
-            stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(2 + capeMotionX / 12 + capeMotionY));
-            stack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees( diagMotion / 2));
-            stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-diagMotion / 2));
-            stack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
-            stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(2 + capeMotionX / 12 + capeMotionY));
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees( diagMotion / 2));
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-diagMotion / 2));
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
+            matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
 
-            model.renderCape(stack, vertices, light, OverlayTexture.DEFAULT_UV);
-            stack.pop();
+            model.renderCape(matrices, vertices, light, OverlayTexture.DEFAULT_UV);
+            matrices.pop();
+
+            plugin.onArmourRendered(player, matrices, provider, EquipmentSlot.BODY, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.CAPE);
         }
     }
 }
