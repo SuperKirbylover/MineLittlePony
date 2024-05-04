@@ -5,6 +5,7 @@ import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.api.pony.PonyPosture;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.PonyElytra;
+import com.minelittlepony.client.model.armour.ArmourLayer;
 import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.PonyRenderContext;
 
@@ -22,39 +23,39 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
 public class ElytraFeature<T extends LivingEntity, M extends EntityModel<T> & PonyModel<T>> extends AbstractPonyFeature<T, M> {
-
     private static final Identifier TEXTURE = new Identifier("textures/entity/elytra.png");
 
-    @SuppressWarnings("unchecked")
-    private final PonyElytra<T> model = (PonyElytra<T>)ModelType.ELYTRA.createModel();
+    private final PonyElytra<T> model = ModelType.ELYTRA.createModel();
 
-    public ElytraFeature(PonyRenderContext<T, M> rp) {
-        super(rp);
+    public ElytraFeature(PonyRenderContext<T, M> context) {
+        super(context);
     }
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider provider, int light, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
-        ItemStack stack = entity.getEquippedStack(EquipmentSlot.CHEST);
         ArmourRendererPlugin plugin = ArmourRendererPlugin.INSTANCE.get();
-        float alpha = plugin.getElytraAlpha(stack, model, entity);
-        if (alpha <= 0) {
-            return;
+
+        for (ItemStack stack : plugin.getArmorStacks(entity, EquipmentSlot.CHEST, ArmourLayer.OUTER)) {
+            float alpha = plugin.getElytraAlpha(stack, model, entity);
+            if (alpha <= 0) {
+                return;
+            }
+
+            VertexConsumer vertexConsumer = plugin.getElytraConsumer(stack, model, entity, provider, getElytraTexture(entity));
+            if (vertexConsumer == null) {
+                return;
+            }
+
+            matrices.push();
+            preRenderCallback(matrices);
+
+            getContextModel().copyStateTo(model);
+            model.isSneaking = PonyPosture.isCrouching(getContext().getEntityPony(entity), entity);
+            model.setAngles(entity, limbDistance, limbAngle, age, headYaw, headPitch);
+            model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, alpha);
+
+            matrices.pop();
         }
-
-        VertexConsumer vertexConsumer = plugin.getElytraConsumer(stack, model, entity, provider, getElytraTexture(entity));
-        if (vertexConsumer == null) {
-            return;
-        }
-
-        matrices.push();
-        preRenderCallback(matrices);
-
-        getContextModel().copyStateTo(model);
-        model.isSneaking = PonyPosture.isCrouching(getContext().getEntityPony(entity), entity);
-        model.setAngles(entity, limbDistance, limbAngle, age, headYaw, headPitch);
-        model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, alpha);
-
-        matrices.pop();
     }
 
     protected void preRenderCallback(MatrixStack stack) {

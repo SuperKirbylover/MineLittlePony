@@ -56,7 +56,7 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
         addLayer(new HeldItemFeature(this, context.getHeldItemRenderer()));
         addLayer(new DJPon3Feature<>(this));
         addLayer(new CapeFeature<>(this));
-        addLayer(new SkullFeature<>(this, context.getModelLoader()));
+        addLayer(new SkullFeature<>(this, context.getModelLoader(), context.getItemRenderer()));
         addLayer(new ElytraFeature<>(this));
         addLayer(new PassengerFeature<>(this, context));
         addLayer(new GearFeature<>(this));

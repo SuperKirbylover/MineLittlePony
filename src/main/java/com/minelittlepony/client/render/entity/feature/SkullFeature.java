@@ -3,6 +3,8 @@ package com.minelittlepony.client.render.entity.feature;
 import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.client.model.AbstractPonyModel;
+import com.minelittlepony.client.model.armour.ArmourLayer;
+import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.PonyRenderContext;
 
 import java.util.Map;
@@ -10,12 +12,12 @@ import java.util.Map;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.SkullBlock;
 import net.minecraft.block.SkullBlock.SkullType;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
@@ -30,66 +32,70 @@ import net.minecraft.village.VillagerDataContainer;
 
 public class SkullFeature<T extends LivingEntity, M extends EntityModel<T> & PonyModel<T>> extends AbstractPonyFeature<T, M> {
 
+    private final ItemRenderer itemRenderer;
+
     private final Map<SkullBlock.SkullType, SkullBlockEntityModel> headModels;
 
-    public SkullFeature(PonyRenderContext<T, M> renderPony, EntityModelLoader entityModelLoader) {
+    public SkullFeature(PonyRenderContext<T, M> renderPony, EntityModelLoader entityModelLoader, ItemRenderer itemRenderer) {
         super(renderPony);
         headModels = SkullBlockEntityRenderer.getModels(entityModelLoader);
+        this.itemRenderer = itemRenderer;
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumerProvider renderContext, int lightUv, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
-        ItemStack itemstack = entity.getEquippedStack(EquipmentSlot.HEAD);
-        if (!itemstack.isEmpty()) {
+    public void render(MatrixStack matrices, VertexConsumerProvider provider, int light, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
+        for (ItemStack stack : ArmourRendererPlugin.INSTANCE.get().getArmorStacks(entity, EquipmentSlot.HEAD, ArmourLayer.OUTER)) {
+            if (stack.isEmpty()) {
+                continue;
+            }
+
             M model = getModelWrapper().body();
-            Item item = itemstack.getItem();
+            Item item = stack.getItem();
 
-            stack.push();
+            matrices.push();
 
-            model.transform(BodyPart.HEAD, stack);
-            model.getHead().rotate(stack);
+            model.transform(BodyPart.HEAD, matrices);
+            model.getHead().rotate(matrices);
 
             if (model instanceof AbstractPonyModel) {
-                stack.translate(0, 0.225F, 0);
+                matrices.translate(0, 0.225F, 0);
             } else {
-                stack.translate(0, 0, 0.15F);
+                matrices.translate(0, 0, 0.15F);
             }
 
-            if (item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof AbstractSkullBlock) {
+            if (item instanceof BlockItem b && b.getBlock() instanceof AbstractSkullBlock) {
                 boolean isVillager = entity instanceof VillagerDataContainer;
 
-                renderSkull(stack, renderContext, itemstack, isVillager, limbDistance, lightUv);
-            } else if (!(item instanceof ArmorItem) || ((ArmorItem)item).getSlotType() != EquipmentSlot.HEAD) {
-                renderBlock(stack, renderContext, entity, itemstack, lightUv);
+                renderSkull(matrices, provider, stack, isVillager, limbDistance, light);
+            } else if (!(item instanceof ArmorItem a) || a.getSlotType() != EquipmentSlot.HEAD) {
+                renderBlock(matrices, provider, entity, stack, light);
             }
 
-            stack.pop();
+            matrices.pop();
         }
-
     }
 
-    private void renderBlock(MatrixStack stack, VertexConsumerProvider renderContext, T entity, ItemStack itemstack, int lightUv) {
-        stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
-        stack.scale(0.625F, -0.625F, -0.625F);
-        stack.translate(0, 0.6F, -0.21F);
+    private void renderBlock(MatrixStack matrices, VertexConsumerProvider provider, T entity, ItemStack stack, int light) {
+        matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
+        matrices.scale(0.625F, -0.625F, -0.625F);
+        matrices.translate(0, 0.6F, -0.21F);
 
-        MinecraftClient.getInstance().getItemRenderer()
-            .renderItem(entity, itemstack, ModelTransformationMode.HEAD, false, stack, renderContext, entity.getWorld(), lightUv, OverlayTexture.DEFAULT_UV, entity.getId() + ModelTransformationMode.HEAD.ordinal());
+        itemRenderer.renderItem(entity, stack, ModelTransformationMode.HEAD, false, matrices, provider, entity.getWorld(), light, OverlayTexture.DEFAULT_UV, entity.getId() + ModelTransformationMode.HEAD.ordinal());
     }
 
-    private void renderSkull(MatrixStack stack, VertexConsumerProvider renderContext, ItemStack itemstack, boolean isVillager, float limbDistance, int lightUv) {
-        stack.translate(0, 0, -0.14F);
+    private void renderSkull(MatrixStack matrices, VertexConsumerProvider provider, ItemStack stack, boolean isVillager, float limbDistance, int light) {
+        matrices.translate(0, 0, -0.14F);
         float f = 1.1875f;
-        stack.scale(f, -f, -f);
+        matrices.scale(f, -f, -f);
         if (isVillager) {
-            stack.translate(0, 0.0625F, 0);
+            matrices.translate(0, 0.0625F, 0);
         }
 
-        stack.translate(-0.5, 0, -0.5);
-        SkullType type = ((AbstractSkullBlock) ((BlockItem) itemstack.getItem()).getBlock()).getSkullType();
+        matrices.translate(-0.5, 0, -0.5);
+        SkullType type = ((AbstractSkullBlock) ((BlockItem) stack.getItem()).getBlock()).getSkullType();
         SkullBlockEntityModel skullBlockEntityModel = (SkullBlockEntityModel)this.headModels.get(type);
-        RenderLayer renderLayer = SkullBlockEntityRenderer.getRenderLayer(type, itemstack.get(DataComponentTypes.PROFILE));
+        RenderLayer renderLayer = SkullBlockEntityRenderer.getRenderLayer(type, stack.get(DataComponentTypes.PROFILE));
 
-        SkullBlockEntityRenderer.renderSkull(null, 180, f, stack, renderContext, lightUv, skullBlockEntityModel, renderLayer);
+        SkullBlockEntityRenderer.renderSkull(null, 180, f, matrices, provider, light, skullBlockEntityModel, renderLayer);
     }
 }
