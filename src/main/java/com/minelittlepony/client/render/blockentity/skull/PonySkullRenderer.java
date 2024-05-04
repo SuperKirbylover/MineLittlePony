@@ -4,6 +4,8 @@ import com.google.common.collect.Maps;
 import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.pony.Pony;
 import com.minelittlepony.client.model.ModelType;
+import com.minelittlepony.client.model.armour.ArmourLayer;
+import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.MobRenderers;
 import com.minelittlepony.client.render.entity.SkeleponyRenderer;
 import com.minelittlepony.client.render.entity.ZomponyRenderer;
@@ -15,6 +17,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.type.ProfileComponent;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
@@ -89,7 +92,7 @@ public class PonySkullRenderer {
         VertexConsumer vertices = renderContext.getBuffer(layer);
 
         selectedSkull.setAngles(yaw, animationProgress);
-        selectedSkull.render(stack, vertices, lightUv, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+        selectedSkull.render(stack, vertices, lightUv, OverlayTexture.DEFAULT_UV, 1, 1, 1, ArmourRendererPlugin.INSTANCE.get().getArmourAlpha(EquipmentSlot.HEAD, ArmourLayer.OUTER));
 
         stack.pop();
 
