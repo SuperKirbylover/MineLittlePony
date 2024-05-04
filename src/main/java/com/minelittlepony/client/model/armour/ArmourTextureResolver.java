@@ -1,7 +1,6 @@
 package com.minelittlepony.client.model.armour;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.client.texture.TextureManager;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.*;
@@ -14,9 +13,7 @@ import net.minecraft.util.profiler.Profiler;
 import com.google.common.cache.*;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.client.MineLittlePony;
-import com.minelittlepony.util.ResourceUtil;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -38,7 +35,7 @@ import java.util.stream.Stream;
  * - the "minecraft" namespace is always replaced with "minelittlepony"
  * <p>
  */
-public class ArmourTextureResolver implements IdentifiableResourceReloadListener {
+public class ArmourTextureResolver implements ArmourTextureLookup, IdentifiableResourceReloadListener {
     public static final Identifier ID = MineLittlePony.id("armor_textures");
     public static final ArmourTextureResolver INSTANCE = new ArmourTextureResolver();
 
@@ -102,10 +99,12 @@ public class ArmourTextureResolver implements IdentifiableResourceReloadListener
         return ID;
     }
 
+    @Override
     public ArmourTexture getTexture(ItemStack stack, ArmourLayer layer, ArmorMaterial.Layer armorLayer) {
         return layerCache.getUnchecked(new ArmourParameters(layer, armorLayer, getCustom(stack)));
     }
 
+    @Override
     public List<ArmorMaterial.Layer> getArmorLayers(ItemStack stack, int dyeColor) {
         if (stack.getItem() instanceof ArmorItem armor) {
             return armor.getMaterial().value().layers();
@@ -120,33 +119,5 @@ public class ArmourTextureResolver implements IdentifiableResourceReloadListener
 
     private record ArmourParameters(ArmourLayer layer, ArmorMaterial.Layer material, int customModelId) {
 
-    }
-
-    public record ArmourTexture(Identifier texture, ArmourVariant variant) {
-        private static final Interner<ArmourTexture> INTERNER = Interners.newWeakInterner();
-        public static final ArmourTexture UNKNOWN = legacy(TextureManager.MISSING_IDENTIFIER);
-
-        public boolean validate() {
-            return texture != TextureManager.MISSING_IDENTIFIER && ResourceUtil.textureExists(texture);
-        }
-
-        public static ArmourTexture legacy(Identifier texture) {
-            return INTERNER.intern(new ArmourTexture(texture, ArmourVariant.LEGACY));
-        }
-
-        public static ArmourTexture modern(Identifier texture) {
-            return INTERNER.intern(new ArmourTexture(texture, ArmourVariant.NORMAL));
-        }
-
-        public Stream<ArmourTexture> named() {
-            return Stream.of(legacy(texture().withPath(p -> p.replace("1", "inner").replace("2", "outer"))), this);
-        }
-
-        public Stream<ArmourTexture> ponify() {
-            if (!PonyConfig.getInstance().disablePonifiedArmour.get()) {
-                return Stream.of(this, modern(ResourceUtil.ponify(texture())));
-            }
-            return Stream.of(this);
-        }
     }
 }

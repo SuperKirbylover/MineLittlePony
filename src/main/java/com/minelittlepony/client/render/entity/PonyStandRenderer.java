@@ -7,7 +7,6 @@ import net.minecraft.client.render.entity.feature.*;
 import net.minecraft.client.render.entity.model.ArmorStandArmorEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -15,7 +14,6 @@ import com.minelittlepony.api.model.Models;
 import com.minelittlepony.api.pony.PonyData;
 import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.client.model.ModelType;
-import com.minelittlepony.client.model.armour.ArmourLayer;
 import com.minelittlepony.client.model.entity.PonyArmourStandModel;
 import com.minelittlepony.client.model.entity.race.EarthPonyModel;
 import com.minelittlepony.client.render.entity.feature.ArmourFeature;
@@ -82,13 +80,7 @@ public class PonyStandRenderer extends ArmorStandEntityRenderer {
                 pony.body().animateModel(entity, limbDistance, limbAngle, tickDelta);
                 pony.body().setAngles(entity, limbDistance, limbAngle, age, headYaw, headPitch);
                 PonyStandRenderer.this.pony.applyAnglesTo(pony.body());
-
-                for (EquipmentSlot i : EquipmentSlot.values()) {
-                    if (i.getType() == EquipmentSlot.Type.ARMOR) {
-                        ArmourFeature.renderArmor(pony, stack, renderContext, lightUv, entity, limbDistance, limbAngle, age, headYaw, headPitch, i, ArmourLayer.INNER);
-                        ArmourFeature.renderArmor(pony, stack, renderContext, lightUv, entity, limbDistance, limbAngle, age, headYaw, headPitch, i, ArmourLayer.OUTER);
-                    }
-                }
+                ArmourFeature.renderArmor(pony, stack, renderContext, lightUv, entity, limbDistance, limbAngle, age, headYaw, headPitch);
             } else {
                 super.render(stack, renderContext, lightUv, entity, limbDistance, limbAngle, tickDelta, age, headYaw, headPitch);
             }
