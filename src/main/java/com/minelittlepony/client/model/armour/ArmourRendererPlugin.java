@@ -58,13 +58,13 @@ public interface ArmourRendererPlugin {
 
     @Nullable
     default VertexConsumer getTrimConsumer(EquipmentSlot slot, VertexConsumerProvider provider, RegistryEntry<ArmorMaterial> material, ArmorTrim trim, ArmourLayer layer) {
-        @Nullable RenderLayer renderLayer = getTrimLayer(slot, material, trim, layer);
-        if (renderLayer == null) {
+        @Nullable VertexConsumer buffer = getOptionalBuffer(provider, getTrimLayer(slot, material, trim, layer));
+        if (buffer == null) {
             return null;
         }
         SpriteAtlasTexture armorTrimsAtlas = MinecraftClient.getInstance().getBakedModelManager().getAtlas(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE);
         Sprite sprite = armorTrimsAtlas.getSprite(layer == ArmourLayer.INNER ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material));
-        return sprite.getTextureSpecificVertexConsumer(provider.getBuffer(renderLayer));
+        return sprite.getTextureSpecificVertexConsumer(buffer);
     }
 
     @Nullable
@@ -74,8 +74,7 @@ public interface ArmourRendererPlugin {
 
     @Nullable
     default VertexConsumer getArmourConsumer(EquipmentSlot slot, VertexConsumerProvider provider, Identifier texture, ArmourLayer layer) {
-        @Nullable RenderLayer renderLayer = getArmourLayer(slot, texture, layer);
-        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+        return getOptionalBuffer(provider, getArmourLayer(slot, texture, layer));
     }
 
     @Nullable
@@ -85,8 +84,7 @@ public interface ArmourRendererPlugin {
 
     @Nullable
     default VertexConsumer getGlintConsumer(EquipmentSlot slot, VertexConsumerProvider provider, ArmourLayer layer) {
-        @Nullable RenderLayer renderLayer = getGlintLayer(slot, layer);
-        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+        return getOptionalBuffer(provider, getGlintLayer(slot, layer));
     }
 
     @Nullable
@@ -99,8 +97,7 @@ public interface ArmourRendererPlugin {
         if (entity.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)) {
             return null;
         }
-        @Nullable RenderLayer renderLayer = getCapeLayer(entity, texture);
-        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+        return getOptionalBuffer(provider, getCapeLayer(entity, texture));
     }
 
     @Nullable
@@ -110,12 +107,11 @@ public interface ArmourRendererPlugin {
 
     @Nullable
     default VertexConsumer getElytraConsumer(ItemStack stack, Model model, LivingEntity entity, VertexConsumerProvider provider, Identifier texture) {
-        @Nullable RenderLayer renderLayer = getElytraLayer(entity, texture);
-        return renderLayer == null ? null : ItemRenderer.getDirectItemGlintConsumer(provider, model.getLayer(texture), false, stack.hasGlint());
+        return ItemRenderer.getDirectItemGlintConsumer(provider, model.getLayer(texture), false, getGlintAlpha(EquipmentSlot.CHEST, stack) > 0F);
     }
 
     @Nullable
-    default RenderLayer getElytraLayer(LivingEntity entity, Identifier texture) {
-        return RenderLayer.getEntitySolid(texture);
+    static VertexConsumer getOptionalBuffer(VertexConsumerProvider provider, @Nullable RenderLayer layer) {
+        return layer == null ? null : provider.getBuffer(layer);
     }
 }
