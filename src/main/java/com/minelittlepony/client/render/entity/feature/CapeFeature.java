@@ -2,18 +2,16 @@ package com.minelittlepony.client.render.entity.feature;
 
 import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.client.model.ClientPonyModel;
+import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.PonyRenderContext;
 
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.*;
-import net.minecraft.entity.EquipmentSlot;
 
 public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> extends AbstractPonyFeature<AbstractClientPlayerEntity, M> {
 
@@ -22,12 +20,17 @@ public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> 
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumerProvider renderContext, int lightUv, AbstractClientPlayerEntity player, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
+    public void render(MatrixStack stack, VertexConsumerProvider provider, int light, AbstractClientPlayerEntity player, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
         M model = getModelWrapper().body();
 
         if (!player.isInvisible()
-                && player.isPartVisible(PlayerModelPart.CAPE) && player.getSkinTextures().capeTexture() != null
-                && player.getEquippedStack(EquipmentSlot.CHEST).getItem() != Items.ELYTRA) {
+            && player.isPartVisible(PlayerModelPart.CAPE)
+            && player.getSkinTextures().capeTexture() != null) {
+
+            VertexConsumer vertices = ArmourRendererPlugin.INSTANCE.get().getCapeConsumer(player, provider, player.getSkinTextures().capeTexture());
+            if (vertices == null) {
+                return;
+            }
 
             stack.push();
 
@@ -67,8 +70,7 @@ public class CapeFeature<M extends ClientPonyModel<AbstractClientPlayerEntity>> 
             stack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180));
             stack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90));
 
-            VertexConsumer vertices = renderContext.getBuffer(RenderLayer.getEntitySolid(player.getSkinTextures().capeTexture()));
-            model.renderCape(stack, vertices, lightUv, OverlayTexture.DEFAULT_UV);
+            model.renderCape(stack, vertices, light, OverlayTexture.DEFAULT_UV);
             stack.pop();
         }
     }

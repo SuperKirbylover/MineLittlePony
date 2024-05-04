@@ -1,14 +1,15 @@
 package com.minelittlepony.client.model.armour;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.item.trim.ArmorTrim;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
@@ -51,6 +52,10 @@ public interface ArmourRendererPlugin {
         return 1F;
     }
 
+    default float getElytraAlpha(ItemStack stack, Model model, LivingEntity entity) {
+        return stack.isOf(Items.ELYTRA) ? 1F : 0F;
+    }
+
     @Nullable
     default VertexConsumer getTrimConsumer(EquipmentSlot slot, VertexConsumerProvider provider, RegistryEntry<ArmorMaterial> material, ArmorTrim trim, ArmourLayer layer) {
         @Nullable RenderLayer renderLayer = getTrimLayer(slot, material, trim, layer);
@@ -87,5 +92,30 @@ public interface ArmourRendererPlugin {
     @Nullable
     default RenderLayer getGlintLayer(EquipmentSlot slot, ArmourLayer layer) {
         return RenderLayer.getArmorEntityGlint();
+    }
+
+    @Nullable
+    default VertexConsumer getCapeConsumer(LivingEntity entity, VertexConsumerProvider provider, Identifier texture) {
+        if (entity.getEquippedStack(EquipmentSlot.CHEST).isOf(Items.ELYTRA)) {
+            return null;
+        }
+        @Nullable RenderLayer renderLayer = getCapeLayer(entity, texture);
+        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+    }
+
+    @Nullable
+    default RenderLayer getCapeLayer(LivingEntity entity, Identifier texture) {
+        return RenderLayer.getEntitySolid(texture);
+    }
+
+    @Nullable
+    default VertexConsumer getElytraConsumer(ItemStack stack, Model model, LivingEntity entity, VertexConsumerProvider provider, Identifier texture) {
+        @Nullable RenderLayer renderLayer = getElytraLayer(entity, texture);
+        return renderLayer == null ? null : ItemRenderer.getDirectItemGlintConsumer(provider, model.getLayer(texture), false, stack.hasGlint());
+    }
+
+    @Nullable
+    default RenderLayer getElytraLayer(LivingEntity entity, Identifier texture) {
+        return RenderLayer.getEntitySolid(texture);
     }
 }
