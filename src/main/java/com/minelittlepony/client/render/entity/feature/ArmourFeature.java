@@ -56,36 +56,41 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                 continue;
             }
 
-            boolean glint = plugin.shouldRenderGlint(armorSlot, stack);
+            float glintAlpha = plugin.getGlintAlpha(armorSlot, stack);
+            boolean glint = glintAlpha > 0;
             int color = plugin.getDyeColor(armorSlot, stack);
 
             Set<PonyArmourModel<?>> models = glint ? new HashSet<>() : null;
 
             ArmourTextureLookup textureLookup = plugin.getTextureLookup();
 
-            for (ArmorMaterial.Layer armorLayer : textureLookup.getArmorLayers(stack, color)) {
-                ArmourTexture layerTexture = textureLookup.getTexture(stack, layer, armorLayer);
+            float alpha = plugin.getArmourAlpha(armorSlot, layer);
 
-                if (layerTexture == ArmourTexture.UNKNOWN) {
-                    continue;
-                }
+            if (alpha > 0) {
+                for (ArmorMaterial.Layer armorLayer : textureLookup.getArmorLayers(stack, color)) {
+                    ArmourTexture layerTexture = textureLookup.getTexture(stack, layer, armorLayer);
 
-                var m = pony.getArmourModel(stack, layer, layerTexture.variant()).orElse(null);
-                if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
-                    VertexConsumer armorConsumer = plugin.getArmourConsumer(armorSlot, provider, layerTexture.texture(), layer);
-                    if (armorConsumer != null) {
-                        float red = 1;
-                        float green = 1;
-                        float blue = 1;
-                        if (armorLayer.isDyeable() && color != Colors.WHITE) {
-                            red = Color.r(color);
-                            green = Color.g(color);
-                            blue = Color.b(color);
-                        }
-                        m.render(matrices, armorConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, 1);
+                    if (layerTexture == ArmourTexture.UNKNOWN) {
+                        continue;
                     }
-                    if (glint) {
-                        models.add(m);
+
+                    var m = pony.getArmourModel(stack, layer, layerTexture.variant()).orElse(null);
+                    if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
+                        VertexConsumer armorConsumer = plugin.getArmourConsumer(armorSlot, provider, layerTexture.texture(), layer);
+                        if (armorConsumer != null) {
+                            float red = 1;
+                            float green = 1;
+                            float blue = 1;
+                            if (armorLayer.isDyeable() && color != Colors.WHITE) {
+                                red = Color.r(color);
+                                green = Color.g(color);
+                                blue = Color.b(color);
+                            }
+                            m.render(matrices, armorConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, alpha);
+                        }
+                        if (glint) {
+                            models.add(m);
+                        }
                     }
                 }
             }
@@ -93,11 +98,14 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
             ArmorTrim trim = stack.get(DataComponentTypes.TRIM);
 
             if (trim != null && stack.getItem() instanceof ArmorItem armor) {
-                var m = pony.getArmourModel(stack, layer, ArmourVariant.TRIM).orElse(null);
-                if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
-                    VertexConsumer trimConsumer = plugin.getTrimConsumer(armorSlot, provider, armor.getMaterial(), trim, layer);
-                    if (trimConsumer != null) {
-                        m.render(matrices, trimConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                float trimAlpha = plugin.getTrimAlpha(armorSlot, armor.getMaterial(), trim, layer);
+                if (trimAlpha > 0) {
+                    var m = pony.getArmourModel(stack, layer, ArmourVariant.TRIM).orElse(null);
+                    if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
+                        VertexConsumer trimConsumer = plugin.getTrimConsumer(armorSlot, provider, armor.getMaterial(), trim, layer);
+                        if (trimConsumer != null) {
+                            m.render(matrices, trimConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                        }
                     }
                 }
             }
@@ -106,7 +114,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                 VertexConsumer glintConsumer = plugin.getGlintConsumer(armorSlot, provider, layer);
                 if (glintConsumer != null) {
                     for (var m : models) {
-                        m.render(matrices, glintConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                        m.render(matrices, glintConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, glintAlpha);
                     }
                 }
             }

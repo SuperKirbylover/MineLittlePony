@@ -35,32 +35,57 @@ public interface ArmourRendererPlugin {
         return new ItemStack[] { entity.getEquippedStack(armorSlot) };
     }
 
-    default boolean shouldRenderGlint(EquipmentSlot slot, ItemStack stack) {
-        return stack.hasGlint();
+    default float getGlintAlpha(EquipmentSlot slot, ItemStack stack) {
+        return stack.hasGlint() ? 1 : 0;
     }
 
     default int getDyeColor(EquipmentSlot slot, ItemStack stack) {
         return stack.isIn(ItemTags.DYEABLE) ? DyedColorComponent.getColor(stack, -6265536) : Colors.WHITE;
     }
 
+    default float getArmourAlpha(EquipmentSlot slot, ArmourLayer layer) {
+        return 1F;
+    }
+
+    default float getTrimAlpha(EquipmentSlot slot, RegistryEntry<ArmorMaterial> material, ArmorTrim trim, ArmourLayer layer) {
+        return 1F;
+    }
+
     @Nullable
     default VertexConsumer getTrimConsumer(EquipmentSlot slot, VertexConsumerProvider provider, RegistryEntry<ArmorMaterial> material, ArmorTrim trim, ArmourLayer layer) {
+        @Nullable RenderLayer renderLayer = getTrimLayer(slot, material, trim, layer);
+        if (renderLayer == null) {
+            return null;
+        }
         SpriteAtlasTexture armorTrimsAtlas = MinecraftClient.getInstance().getBakedModelManager().getAtlas(TexturedRenderLayers.ARMOR_TRIMS_ATLAS_TEXTURE);
-        Sprite sprite = armorTrimsAtlas.getSprite(
-            layer == ArmourLayer.INNER ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material)
-        );
-        return sprite.getTextureSpecificVertexConsumer(
-                provider.getBuffer(TexturedRenderLayers.getArmorTrims(trim.getPattern().value().decal()))
-        );
+        Sprite sprite = armorTrimsAtlas.getSprite(layer == ArmourLayer.INNER ? trim.getLeggingsModelId(material) : trim.getGenericModelId(material));
+        return sprite.getTextureSpecificVertexConsumer(provider.getBuffer(renderLayer));
+    }
+
+    @Nullable
+    default RenderLayer getTrimLayer(EquipmentSlot slot, RegistryEntry<ArmorMaterial> material, ArmorTrim trim, ArmourLayer layer) {
+        return TexturedRenderLayers.getArmorTrims(trim.getPattern().value().decal());
     }
 
     @Nullable
     default VertexConsumer getArmourConsumer(EquipmentSlot slot, VertexConsumerProvider provider, Identifier texture, ArmourLayer layer) {
-        return provider.getBuffer(RenderLayer.getArmorCutoutNoCull(texture));
+        @Nullable RenderLayer renderLayer = getArmourLayer(slot, texture, layer);
+        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+    }
+
+    @Nullable
+    default RenderLayer getArmourLayer(EquipmentSlot slot, Identifier texture, ArmourLayer layer) {
+        return RenderLayer.getArmorCutoutNoCull(texture);
     }
 
     @Nullable
     default VertexConsumer getGlintConsumer(EquipmentSlot slot, VertexConsumerProvider provider, ArmourLayer layer) {
-        return provider.getBuffer(RenderLayer.getArmorEntityGlint());
+        @Nullable RenderLayer renderLayer = getGlintLayer(slot, layer);
+        return renderLayer == null ? null : provider.getBuffer(renderLayer);
+    }
+
+    @Nullable
+    default RenderLayer getGlintLayer(EquipmentSlot slot, ArmourLayer layer) {
+        return RenderLayer.getArmorEntityGlint();
     }
 }
