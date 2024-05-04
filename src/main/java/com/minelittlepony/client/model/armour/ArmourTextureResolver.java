@@ -1,22 +1,27 @@
 package com.minelittlepony.client.model.armour;
 
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.profiler.Profiler;
+
 import com.google.common.cache.*;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.util.ResourceUtil;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The default texture resolver used by Mine Little Pony.
@@ -33,50 +38,72 @@ import java.util.stream.Collectors;
  * - the "minecraft" namespace is always replaced with "minelittlepony"
  * <p>
  */
-public class ArmourTextureResolver {
+public class ArmourTextureResolver implements IdentifiableResourceReloadListener {
+    public static final Identifier ID = MineLittlePony.id("armor_textures");
     public static final ArmourTextureResolver INSTANCE = new ArmourTextureResolver();
 
-    private static final String CUSTOM_NONE = "none";
+    private static final Interner<ArmorMaterial.Layer> LAYER_INTERNER = Interners.newWeakInterner();
 
-    private final Cache<String, ArmourTexture> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<ArmourParameters, ArmourTexture> layerCache = CacheBuilder.newBuilder()
             .expireAfterAccess(30, TimeUnit.SECONDS)
-            .<String, ArmourTexture>build();
-    private final LoadingCache<String, ArmourTexture> layerCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(30, TimeUnit.SECONDS)
-            .build(CacheLoader.from(texture -> {
-                String[] parts = texture.split("#");
-                if (!parts[1].equals(CUSTOM_NONE)) {
-                    parts[0] = parts[0].replace(".png", parts[1] + ".png");
-                }
-                List<ArmourTexture> options = new ArrayList<>();
-                ArmourTexture.resolveHumanOrPony(new Identifier(parts[0].replace("1", "inner").replace("2", "outer")), options);
-                ArmourTexture.resolveHumanOrPony(new Identifier(parts[0]), options);
-                ArmourTexture result = ArmourTexture.pick(options);
-                if (result == ArmourTexture.UNKNOWN) {
-                    MineLittlePony.logger.warn("Could not identify correct texture to use for {}. Was none of: [" + System.lineSeparator() + "{}" + System.lineSeparator() + "]", texture, options.stream()
-                            .map(ArmourTexture::texture)
-                            .map(Identifier::toString)
-                            .collect(Collectors.joining("," + System.lineSeparator())));
-                    return new ArmourTexture(new Identifier(parts[0]), ArmourVariant.LEGACY);
-                }
-                return result;
+            .build(CacheLoader.from(parameters -> {
+                return Stream.of(ArmourTexture.legacy(parameters.material().getTexture(parameters.layer() == ArmourLayer.OUTER))).flatMap(i -> {
+                    if (parameters.layer() == ArmourLayer.OUTER) {
+                        return Stream.of(i, ArmourTexture.legacy(parameters.material().getTexture(false)));
+                    }
+                    return Stream.of(i);
+                }).flatMap(i -> {
+                    if (parameters.customModelId() != 0) {
+                        return Stream.of(ArmourTexture.legacy(i.texture().withPath(p -> p.replace(".png", parameters.customModelId() + ".png"))), i);
+                    }
+                    return Stream.of(i);
+                }).flatMap(this::performLookup).findFirst().orElse(ArmourTexture.UNKNOWN);
             }));
     private final LoadingCache<Identifier, List<ArmorMaterial.Layer>> nonDyedLayers = CacheBuilder.newBuilder()
             .expireAfterAccess(30, TimeUnit.SECONDS)
-            .build(CacheLoader.from(material -> List.of(new ArmorMaterial.Layer(material, "", false))));
+            .build(CacheLoader.from(material -> List.of(LAYER_INTERNER.intern(new ArmorMaterial.Layer(material, "", false)))));
     private final LoadingCache<Identifier, List<ArmorMaterial.Layer>> dyedLayers = CacheBuilder.newBuilder()
             .expireAfterAccess(30, TimeUnit.SECONDS)
             .build(CacheLoader.from(material -> List.of(
-                    new ArmorMaterial.Layer(material, "", false),
-                    new ArmorMaterial.Layer(material, "overlay", true)
+                    LAYER_INTERNER.intern(new ArmorMaterial.Layer(material, "", false)),
+                    LAYER_INTERNER.intern(new ArmorMaterial.Layer(material, "overlay", true))
             )));
 
+    private Stream<ArmourTexture> performLookup(ArmourTexture id) {
+        List<ArmourTexture> options = Stream.of(id)
+                .flatMap(ArmourTexture::named)
+                .flatMap(ArmourTexture::ponify)
+                .toList();
+        return options.stream().distinct()
+                .filter(ArmourTexture::validate)
+                .findFirst()
+                .or(() -> {
+            MineLittlePony.logger.warn("Could not identify correct texture to use for {}. Was none of: [" + System.lineSeparator() + "{}" + System.lineSeparator() + "]", id, options.stream()
+                    .map(ArmourTexture::texture)
+                    .map(Identifier::toString)
+                    .collect(Collectors.joining("," + System.lineSeparator())));
+            return Optional.empty();
+        }).stream();
+    }
+
     public void invalidate() {
-        cache.invalidateAll();
+        layerCache.invalidateAll();
+        nonDyedLayers.invalidateAll();
+        dyedLayers.invalidateAll();
+    }
+
+    @Override
+    public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
+        return CompletableFuture.runAsync(this::invalidate, prepareExecutor).thenCompose(synchronizer::whenPrepared);
+    }
+
+    @Override
+    public Identifier getFabricId() {
+        return ID;
     }
 
     public ArmourTexture getTexture(ItemStack stack, ArmourLayer layer, ArmorMaterial.Layer armorLayer) {
-        return layerCache.getUnchecked(armorLayer.getTexture(layer == ArmourLayer.OUTER) + "#" + getCustom(stack));
+        return layerCache.getUnchecked(new ArmourParameters(layer, armorLayer, getCustom(stack)));
     }
 
     public List<ArmorMaterial.Layer> getArmorLayers(ItemStack stack, int dyeColor) {
@@ -87,34 +114,39 @@ public class ArmourTextureResolver {
         return (dyeColor == Colors.WHITE ? nonDyedLayers : dyedLayers).getUnchecked(Registries.ITEM.getId(stack.getItem()));
     }
 
-    private String getCustom(ItemStack stack) {
-        int custom = stack.getOrDefault(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelDataComponent.DEFAULT).value();
-        return custom == 0 ? "none" : String.valueOf(custom);
+    private int getCustom(ItemStack stack) {
+        return stack.getOrDefault(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelDataComponent.DEFAULT).value();
+    }
+
+    private record ArmourParameters(ArmourLayer layer, ArmorMaterial.Layer material, int customModelId) {
+
     }
 
     public record ArmourTexture(Identifier texture, ArmourVariant variant) {
-        public static final ArmourTexture UNKNOWN = new ArmourTexture(TextureManager.MISSING_IDENTIFIER, ArmourVariant.LEGACY);
+        private static final Interner<ArmourTexture> INTERNER = Interners.newWeakInterner();
+        public static final ArmourTexture UNKNOWN = legacy(TextureManager.MISSING_IDENTIFIER);
 
         public boolean validate() {
             return texture != TextureManager.MISSING_IDENTIFIER && ResourceUtil.textureExists(texture);
         }
 
-        public static ArmourTexture pick(List<ArmourTexture> options) {
-            return options.stream().filter(ArmourTexture::validate).findFirst().orElse(ArmourTexture.UNKNOWN);
+        public static ArmourTexture legacy(Identifier texture) {
+            return INTERNER.intern(new ArmourTexture(texture, ArmourVariant.LEGACY));
         }
 
-        @Nullable
-        private static void resolveHumanOrPony(Identifier human, List<ArmourTexture> output) {
-            String domain = human.getNamespace();
-            if (Identifier.DEFAULT_NAMESPACE.contentEquals(domain)) {
-                domain = "minelittlepony"; // it's a vanilla armor. I provide these.
-            }
+        public static ArmourTexture modern(Identifier texture) {
+            return INTERNER.intern(new ArmourTexture(texture, ArmourVariant.NORMAL));
+        }
 
+        public Stream<ArmourTexture> named() {
+            return Stream.of(legacy(texture().withPath(p -> p.replace("1", "inner").replace("2", "outer"))), this);
+        }
+
+        public Stream<ArmourTexture> ponify() {
             if (!PonyConfig.getInstance().disablePonifiedArmour.get()) {
-                output.add(new ArmourTexture(new Identifier(domain, human.getPath().replace(".png", "_pony.png")), ArmourVariant.NORMAL));
+                return Stream.of(this, modern(ResourceUtil.ponify(texture())));
             }
-
-            output.add(new ArmourTexture(human, ArmourVariant.LEGACY));
+            return Stream.of(this);
         }
     }
 }

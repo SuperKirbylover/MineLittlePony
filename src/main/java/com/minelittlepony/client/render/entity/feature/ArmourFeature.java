@@ -66,6 +66,10 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
         for (ArmorMaterial.Layer armorLayer : ArmourTextureResolver.INSTANCE.getArmorLayers(stack, color)) {
             ArmourTexture layerTexture = ArmourTextureResolver.INSTANCE.getTexture(stack, layer, armorLayer);
 
+            if (layerTexture == ArmourTexture.UNKNOWN) {
+                continue;
+            }
+
             var m = pony.getArmourModel(stack, layer, layerTexture.variant()).orElse(null);
             if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
                 float red = 1;

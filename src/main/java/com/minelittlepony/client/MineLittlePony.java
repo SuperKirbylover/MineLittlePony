@@ -80,6 +80,7 @@ public class MineLittlePony implements ClientModInitializer {
 
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(ponyManager);
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(variatedTextures);
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(ArmourTextureResolver.INSTANCE);
 
         // convert legacy pony skins
         SkinFilterCallback.EVENT.register(new LegacySkinConverter());
