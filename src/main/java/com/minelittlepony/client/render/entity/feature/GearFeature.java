@@ -2,11 +2,16 @@ package com.minelittlepony.client.render.entity.feature;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import net.minecraft.block.SkullBlock;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.EmptyBlockView;
 
 import com.google.common.cache.*;
 import com.google.common.collect.Streams;
@@ -15,6 +20,8 @@ import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.api.model.gear.Gear;
 import com.minelittlepony.api.pony.meta.Wearable;
 import com.minelittlepony.client.model.ModelType;
+import com.minelittlepony.client.model.armour.ArmourLayer;
+import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.PonyRenderContext;
 
 import java.util.*;
@@ -52,6 +59,14 @@ public class GearFeature<T extends LivingEntity, M extends EntityModel<T> & Pony
             return;
         }
 
+        boolean hasSkull = false;
+        for (ItemStack skull : ArmourRendererPlugin.INSTANCE.get().getArmorStacks(entity, EquipmentSlot.HEAD, ArmourLayer.OUTER, ArmourRendererPlugin.ArmourType.SKULL)) {
+            if (skull.getItem() instanceof BlockItem b && (b.getBlock() instanceof SkullBlock || b.getBlock().getDefaultState().isSolidBlock(EmptyBlockView.INSTANCE, BlockPos.ORIGIN))) {
+                hasSkull = true;
+                break;
+            }
+        }
+
         final M model = getModelWrapper().body();
         final Object2FloatMap<BodyPart> renderStackingOffsets = new Object2FloatLinkedOpenHashMap<>();
 
@@ -60,9 +75,12 @@ public class GearFeature<T extends LivingEntity, M extends EntityModel<T> & Pony
                 stack.push();
                 Gear gear = entry.gear();
                 gear.transform(model, stack);
+                BodyPart part = gear.getGearLocation();
+                if (hasSkull && part== BodyPart.HEAD && renderStackingOffsets.getFloat(part) == 0) {
+                    renderStackingOffsets.put(part, 0.25F);
+                }
 
                 if (gear.isStackable()) {
-                    BodyPart part = gear.getGearLocation();
                     float v = renderStackingOffsets.getFloat(part);
                     if (v != 0) {
                         stack.translate(0, -v, 0);
