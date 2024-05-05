@@ -31,7 +31,6 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
 
     public static final Pivot ORIGIN = new Pivot(0, 0, 0);
     public static final Pivot HEAD_SNEAKING = new Pivot(0, 6, -2);
-    public static final Pivot HEAD_SLEEPING = new Pivot(1, 2, 0);
     public static final Pivot BODY_SNEAKING = new Pivot(0, 7, -4);
     public static final Pivot BODY_RIDING = new Pivot(0, 1, 4);
     public static final Pivot FONT_LEGS_SLEEPING = new Pivot(0, 2, 6);
@@ -194,8 +193,6 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
 
         rightLeg.pitch = MathUtil.Angles._90_DEG;
         leftLeg.pitch = MathUtil.Angles._90_DEG;
-
-        HEAD_SLEEPING.set(head);
 
         FONT_LEGS_SLEEPING.add(rightArm);
         FONT_LEGS_SLEEPING.add(leftArm);
@@ -594,11 +591,8 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
             stack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180));
         }
 
-        boolean crouching = attributes.isCrouching;
-
         if (attributes.isLyingDown && !attributes.isSleeping) {
             stack.translate(0, 1.35F, 0);
-            attributes.isCrouching = sneaking;
         }
 
         if (attributes.isHorsey) {
@@ -612,7 +606,5 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
         }
 
         PonyTransformation.forSize(getSize()).transform(this, part, stack);
-
-        attributes.isCrouching = crouching;
     }
 }
