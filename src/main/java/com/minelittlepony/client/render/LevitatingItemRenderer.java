@@ -12,6 +12,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
@@ -55,6 +56,11 @@ public class LevitatingItemRenderer {
 
                     if (doMagic) {
                         VertexConsumerProvider interceptedContext = getProvider(pony, renderContext);
+
+                        if (stack.hasGlint()) {
+                            stack = stack.copy();
+                            stack.set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false);
+                        }
 
                         matrix.scale(1.1F, 1.1F, 1.1F);
                         matrix.translate(0.015F, 0.01F, 0.01F);
