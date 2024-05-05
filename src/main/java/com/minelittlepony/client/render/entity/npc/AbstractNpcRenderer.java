@@ -13,7 +13,6 @@ import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.api.pony.meta.Wearable;
 import com.minelittlepony.client.model.*;
 import com.minelittlepony.client.render.entity.PonyRenderer;
-import com.minelittlepony.client.render.entity.feature.*;
 import com.minelittlepony.client.render.entity.npc.textures.*;
 
 import java.util.function.Function;
@@ -32,12 +31,6 @@ abstract class AbstractNpcRenderer<T extends MobEntity & VillagerDataContainer> 
         clothing = new NpcClothingFeature<>(this, type);
         this.manager.setModelsLookup(entity -> models.apply(getEntityPony(entity).race()));
         addFeature(clothing);
-    }
-
-    @Override
-    protected void addFeatures(EntityRendererFactory.Context context) {
-        addFeature(createHeldItemFeature(context));
-        addFeature(new GearFeature<>(this));
     }
 
     @Override
