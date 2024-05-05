@@ -54,6 +54,13 @@ public class PiglinPonyModel extends ZomponyModel<HostileEntity> {
     }
 
     @Override
+    public void setHeadRotation(float animationProgress, float yaw, float pitch) {
+        super.setHeadRotation(animationProgress, yaw, pitch);
+        leftFlap.roll = -(float)(-(Math.cos((double)(animationProgress * (float) Math.PI * 0.2F * 1.2F)) + 2.5)) * 0.2F;
+        rightFlap.roll = -(float)(Math.cos((double)(animationProgress * (float) Math.PI * 0.2F)) + 2.5) * 0.2F;
+    }
+
+    @Override
     protected void rotateLegs(float move, float swing, float ticks, HostileEntity entity) {
         super.rotateLegs(move, swing, ticks, entity);
 
