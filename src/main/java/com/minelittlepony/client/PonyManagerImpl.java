@@ -123,9 +123,9 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
     }
 
     @Override
-    public void reload(ResourceManager var1) {
+    public void reload(ResourceManager manager) {
         clearCache();
-        PonySkullRenderer.reload();
+        PonySkullRenderer.INSTANCE.reload();
     }
 
     @Override

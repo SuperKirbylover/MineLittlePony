@@ -39,7 +39,7 @@ abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<Skul
             SkullBlockEntityModel model, RenderLayer layer,
             CallbackInfo info) {
 
-        if (!info.isCancelled() && PonySkullRenderer.renderSkull(direction, angle, poweredTicks, stack, renderContext, layer, lightUv)) {
+        if (!info.isCancelled() && PonySkullRenderer.INSTANCE.renderSkull(direction, angle, poweredTicks, stack, renderContext, layer, lightUv)) {
             info.cancel();
         }
     }
@@ -50,7 +50,7 @@ abstract class MixinSkullBlockEntityRenderer implements BlockEntityRenderer<Skul
             + ")Lnet/minecraft/client/render/RenderLayer;", at = @At("HEAD"), cancellable = true)
     private static void onGetRenderLayer(SkullBlock.SkullType skullType, @Nullable ProfileComponent profile, CallbackInfoReturnable<RenderLayer> info) {
         if (!info.isCancelled()) {
-            RenderLayer result = PonySkullRenderer.getSkullRenderLayer(skullType, profile);
+            RenderLayer result = PonySkullRenderer.INSTANCE.getSkullRenderLayer(skullType, profile);
             if (result != null) {
                 info.setReturnValue(result);
             }
