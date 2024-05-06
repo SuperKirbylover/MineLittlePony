@@ -6,6 +6,7 @@ import com.minelittlepony.api.pony.*;
 import com.minelittlepony.api.pony.meta.Wearable;
 import com.minelittlepony.common.client.gui.ScrollContainer;
 import com.minelittlepony.common.client.gui.element.Button;
+import com.minelittlepony.hdskins.HDSkinsServer;
 import com.minelittlepony.hdskins.client.*;
 import com.minelittlepony.hdskins.client.gui.GuiSkins;
 import com.minelittlepony.hdskins.client.gui.player.DummyPlayer;
@@ -84,7 +85,7 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
     private void renderOption(Screen screen, @Nullable Screen parent, int row, int RIGHT, ScrollContainer content) {
         content.addButton(new Button(RIGHT, row += 20, 150, 20))
             .onClick(button -> MinecraftClient.getInstance().setScreen(
-                    parent instanceof GuiSkins ? parent : GuiSkins.create(screen, HDSkins.getInstance().getSkinServerList())
+                    parent instanceof GuiSkins ? parent : GuiSkins.create(screen, HDSkinsServer.getInstance().getServers())
             ))
             .getStyle()
                 .setText("minelp.options.skins.hdskins.open");

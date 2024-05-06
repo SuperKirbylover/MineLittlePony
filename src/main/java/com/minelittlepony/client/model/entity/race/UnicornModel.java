@@ -4,7 +4,6 @@ import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.meta.Size;
 import com.minelittlepony.api.pony.meta.SizePreset;
-import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.part.UnicornHorn;
 import com.minelittlepony.client.util.render.RenderList;
 import com.minelittlepony.mson.api.ModelView;
