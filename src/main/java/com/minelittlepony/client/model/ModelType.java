@@ -56,7 +56,7 @@ public final class ModelType {
     public static final ModelKey<PonyArmourModel<?>> INNER_PONY_ARMOR = register("armor/inner_pony_armor", PonyArmourModel::new);
     public static final ModelKey<PonyArmourModel<?>> OUTER_PONY_ARMOR = register("armor/outer_pony_armor", PonyArmourModel::new);
 
-    public static final GearModelKey<AbstractGearModel> STETSON = registerGear("stetson", Wearable.STETSON, t -> new WearableGear(Wearable.STETSON, BodyPart.HEAD, 0.15F));
+    public static final GearModelKey<AbstractGearModel> STETSON = registerGear("stetson", Wearable.STETSON, t -> new WearableGear(Wearable.STETSON, BodyPart.HEAD, 0.15F).addPart(t));
     public static final GearModelKey<SaddleBags> SADDLEBAGS_BOTH = registerGear("saddlebags", Wearable.SADDLE_BAGS_BOTH, t -> new SaddleBags(t, Wearable.SADDLE_BAGS_BOTH));
     public static final GearModelKey<SaddleBags> SADDLEBAGS_LEFT = registerGear(SADDLEBAGS_BOTH, Wearable.SADDLE_BAGS_LEFT, t -> new SaddleBags(t, Wearable.SADDLE_BAGS_LEFT));
     public static final GearModelKey<SaddleBags> SADDLEBAGS_RIGHT = registerGear(SADDLEBAGS_BOTH, Wearable.SADDLE_BAGS_RIGHT, t -> new SaddleBags(t, Wearable.SADDLE_BAGS_RIGHT));
