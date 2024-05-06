@@ -4,6 +4,7 @@ import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.meta.Size;
 import com.minelittlepony.api.pony.meta.SizePreset;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.part.UnicornHorn;
 import com.minelittlepony.client.util.render.RenderList;
 import com.minelittlepony.mson.api.ModelView;
@@ -11,6 +12,7 @@ import com.minelittlepony.mson.api.ModelView;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.*;
 
 /**
@@ -89,8 +91,11 @@ public class UnicornModel<T extends LivingEntity> extends EarthPonyModel<T> impl
         matrices.translate(0.4F - (0.3F * left), -0.675F, -0.3F);
 
         UseAction action = getAttributes().heldStack.getUseAction();
+        boolean shouldAimItem =
+                (action == UseAction.SPYGLASS || action == UseAction.BOW) && getAttributes().itemUseTime > 0
+                || PonyConfig.getInstance().forwardHoldingItems.get().contains(Registries.ITEM.getId(getAttributes().heldStack.getItem()));
 
-        if ((action == UseAction.SPYGLASS || action == UseAction.BOW) && getAttributes().itemUseTime > 0) {
+        if (shouldAimItem) {
             Arm main = getAttributes().mainArm;
             if (getAttributes().activeHand == Hand.OFF_HAND) {
                 main = main.getOpposite();

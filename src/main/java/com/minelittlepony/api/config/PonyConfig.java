@@ -1,13 +1,16 @@
 package com.minelittlepony.api.config;
 
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+import com.google.gson.GsonBuilder;
 import com.minelittlepony.api.pony.meta.*;
 import com.minelittlepony.common.client.gui.VisibilityMode;
 import com.minelittlepony.common.util.GamePaths;
 import com.minelittlepony.common.util.settings.*;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 
 /**
  * Storage container for MineLP client settings.
@@ -85,8 +88,13 @@ public class PonyConfig extends Config {
                 .addComment("ON - always show")
                 .addComment("OFF - never show");
 
+    public final Setting<HashSet<Identifier>> forwardHoldingItems = value("customisation", "forwardHoldingItems", HashSet::new, Identifier.class)
+                .addComment("Contains a list of item ids that should preserve orientation")
+                .addComment("when held in a unicorn's magical aura in first person");
+
     public PonyConfig(Path path) {
-        super(HEIRARCHICAL_JSON_ADAPTER, path);
+        super(new HeirarchicalJsonConfigAdapter(new GsonBuilder()
+                .registerTypeAdapter(Identifier.class, new ToStringAdapter<>(Identifier::toString, Identifier::new))), path);
         instance = this;
     }
 

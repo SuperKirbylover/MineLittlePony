@@ -14,8 +14,8 @@ import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.RotationAxis;
@@ -98,7 +98,10 @@ public class LevitatingItemRenderer {
             boolean handHeldTool =
                        action == UseAction.BOW
                     || action == UseAction.CROSSBOW
-                    || action == UseAction.BLOCK;
+                    || action == UseAction.BLOCK
+                    || item.getItem() instanceof ToolItem
+                    || item.getItem() instanceof RangedWeaponItem
+                    || PonyConfig.getInstance().forwardHoldingItems.get().contains(Registries.ITEM.getId(item.getItem()));
 
             float distanceChange = handHeldTool ? -0.3F : -0.6F;
 
