@@ -8,6 +8,7 @@ import com.minelittlepony.client.util.render.RenderLayerUtil;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -18,17 +19,18 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.UseAction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.world.World;
 
 public class LevitatingItemRenderer {
-    private VertexConsumerProvider getProvider(Pony pony, VertexConsumerProvider renderContext) {
+    private VertexConsumerProvider getProvider(Pony pony, VertexConsumerProvider provider) {
         final int color = pony.metadata().glowColor();
         return layer -> {
             if (layer.getVertexFormat() != VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL) {
-                return renderContext.getBuffer(layer);
+                return provider.getBuffer(layer);
             }
-            return renderContext.getBuffer(MagicGlow.getColoured(RenderLayerUtil.getTexture(layer).orElse(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE), color));
+            return provider.getBuffer(MagicGlow.getColoured(RenderLayerUtil.getTexture(layer).orElse(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE), color));
         };
     }
 
@@ -62,12 +64,20 @@ public class LevitatingItemRenderer {
                             stack.set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false);
                         }
 
-                        matrix.scale(1.1F, 1.1F, 1.1F);
-                        matrix.translate(0.015F, 0.01F, 0.01F);
+                        float tickDelta = MinecraftClient.getInstance().getTickDelta() + entity.age;
+
+
+                        float driftStrength = 0.002F;
+                        float xDrift = MathHelper.sin(tickDelta / 20F) * driftStrength;
+                        float zDrift = MathHelper.cos((tickDelta + 20) / 20F) * driftStrength;
+
+                        float scale = 1.1F + (MathHelper.sin(tickDelta / 20F) + 1) * driftStrength;
+                        matrix.scale(scale, scale, scale);
+                        matrix.translate(0.015F + xDrift, 0.01F, 0.01F + zDrift);
 
                         itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
-                        matrix.scale(1.1F, 1.1F, 1.1F);
-                        matrix.translate(-0.03F, -0.02F, -0.02F);
+                        matrix.scale(scale, scale, scale);
+                        matrix.translate(-0.03F - xDrift, -0.02F, -0.02F - zDrift);
                         itemRenderer.renderItem(entity, stack, mode, left, matrix, interceptedContext, world, lightUv, OverlayTexture.DEFAULT_UV, posLong);
                     }
 

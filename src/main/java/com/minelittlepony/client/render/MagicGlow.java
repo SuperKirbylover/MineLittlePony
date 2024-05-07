@@ -30,6 +30,7 @@ public abstract class MagicGlow extends RenderPhase {
             .transparency(LIGHTNING_TRANSPARENCY)
             .lightmap(DISABLE_LIGHTMAP)
             .cull(DISABLE_CULLING)
+            .layering(VIEW_OFFSET_Z_LAYERING)
             .build(false));
     });
 
@@ -42,6 +43,7 @@ public abstract class MagicGlow extends RenderPhase {
                 .transparency(LIGHTNING_TRANSPARENCY)
                 .lightmap(DISABLE_LIGHTMAP)
                 .cull(DISABLE_CULLING)
+                .layering(VIEW_OFFSET_Z_LAYERING)
                 .build(true));
     });
 
