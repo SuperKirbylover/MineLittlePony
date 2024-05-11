@@ -18,7 +18,7 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 
 **Version Information:**
  - Minecraft Version: [e.g. 1.20.5]
- - Mine Little Pony Version: [e.g. chrome, safari]
+ - Mine Little Pony Version: 
 
 **Mod Loader:**
  - [ ] Fabric

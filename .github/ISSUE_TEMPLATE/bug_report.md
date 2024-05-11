@@ -21,7 +21,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Version Information:**
  - Minecraft Version: [e.g. 1.20.5]
- - Mine Little Pony Version: [e.g. chrome, safari]
+ - Mine Little Pony Version:
 
 **Mod Loader:**
  - [ ] Fabric
