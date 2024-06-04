@@ -63,7 +63,7 @@ public class SaddleBags extends WearableGear {
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer renderContext, int overlayUv, int lightUv, float red, float green, float blue, float alpha, UUID interpolatorId) {
+    public void render(MatrixStack stack, VertexConsumer renderContext, int overlay, int light, int color, UUID interpolatorId) {
 
         stack.push();
         if (wearable == Wearable.SADDLE_BAGS_BOTH) {
@@ -77,11 +77,11 @@ public class SaddleBags extends WearableGear {
             stack.translate(0, 0.3F, -0.3F);
         }
 
-        leftBag.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
-        rightBag.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
+        leftBag.render(stack, renderContext, overlay, light, color);
+        rightBag.render(stack, renderContext, overlay, light, color);
 
         stack.pop();
-        strap.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
+        strap.render(stack, renderContext, overlay, light, color);
 
         stack.pop();
     }

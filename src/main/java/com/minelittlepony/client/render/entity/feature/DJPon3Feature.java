@@ -6,6 +6,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Colors;
 
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.api.model.BodyPart;
@@ -22,7 +23,7 @@ public class DJPon3Feature<T extends AbstractClientPlayerEntity, M extends Entit
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumerProvider renderContext, int lightUv, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
+    public void render(MatrixStack stack, VertexConsumerProvider renderContext, int light, T entity, float limbDistance, float limbAngle, float tickDelta, float age, float headYaw, float headPitch) {
         if ("deadmau5".equals(entity.getName().getString())) {
             stack.push();
 
@@ -38,7 +39,7 @@ public class DJPon3Feature<T extends AbstractClientPlayerEntity, M extends Entit
 
             VertexConsumer vertices = renderContext.getBuffer(deadMau5.getLayer(entity.getSkinTextures().texture()));
 
-            deadMau5.render(stack, vertices, OverlayTexture.DEFAULT_UV, lightUv, limbDistance, limbAngle, tickDelta, 1);
+            deadMau5.render(stack, vertices, OverlayTexture.DEFAULT_UV, light, Colors.WHITE);
 
             stack.pop();
         }

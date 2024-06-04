@@ -96,7 +96,7 @@ public class LionTail implements SubModel {
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
-        tail.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
+        tail.render(stack, vertices, overlay, light, color);
     }
 }

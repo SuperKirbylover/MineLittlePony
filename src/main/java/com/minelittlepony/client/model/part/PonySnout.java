@@ -34,7 +34,7 @@ public class PonySnout implements SubModel, MsonModel {
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
     }
 
     @Override

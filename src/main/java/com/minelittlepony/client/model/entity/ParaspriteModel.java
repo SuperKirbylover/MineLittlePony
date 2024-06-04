@@ -38,8 +38,8 @@ public class ParaspriteModel<T extends LivingEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        root.render(matrices, vertices, light, overlay, red, green, blue, alpha);
+    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
+        root.render(matrices, vertices, light, overlay, color);
     }
 
     @Override

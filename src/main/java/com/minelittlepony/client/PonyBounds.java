@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class PonyBounds {
     private static Vec3d getBaseRidingOffset(LivingEntity entity) {
-        float delta = MinecraftClient.getInstance().getTickDelta();
+        float delta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false);
         return new Vec3d(
                 MathHelper.lerp(delta, entity.prevX, entity.getX()),
                 MathHelper.lerp(delta, entity.prevY, entity.getY()),

@@ -94,7 +94,7 @@ public class PonyConfig extends Config {
 
     public PonyConfig(Path path) {
         super(new HeirarchicalJsonConfigAdapter(new GsonBuilder()
-                .registerTypeAdapter(Identifier.class, new ToStringAdapter<>(Identifier::toString, Identifier::new))), path);
+                .registerTypeAdapter(Identifier.class, new ToStringAdapter<>(Identifier::toString, Identifier::of))), path);
         instance = this;
     }
 

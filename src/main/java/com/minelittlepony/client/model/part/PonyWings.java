@@ -96,9 +96,9 @@ public class PonyWings<T extends Model & WingedPonyModel<?>> implements SubModel
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
-        getLeft().render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
-        getRight().render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
+        getLeft().render(stack, vertices, overlay, light, color);
+        getRight().render(stack, vertices, overlay, light, color);
     }
 
     public static class Wing implements MsonModel {
@@ -135,19 +135,19 @@ public class PonyWings<T extends Model & WingedPonyModel<?>> implements SubModel
             }
         }
 
-        public void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha) {
+        public void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color) {
             stack.push();
             stack.scale(wingScale, wingScale, wingScale);
 
             if (pegasus.wingsAreOpen()) {
-                extended.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+                extended.render(stack, vertices, overlay, light, color);
             } else {
                 boolean bags = pegasus.isWearing(Wearable.SADDLE_BAGS_BOTH);
                 if (bags) {
                     stack.push();
                     stack.translate(0, 0, 0.198F);
                 }
-                folded.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+                folded.render(stack, vertices, overlay, light, color);
                 if (bags) {
                     stack.pop();
                 }

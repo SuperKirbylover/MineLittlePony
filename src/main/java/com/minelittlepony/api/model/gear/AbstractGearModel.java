@@ -27,14 +27,14 @@ public abstract class AbstractGearModel extends Model implements Gear {
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, UUID interpolatorId) {
-        render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, UUID interpolatorId) {
+        render(stack, vertices, overlay, light, color);
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer renderContext, int overlayUv, int lightUv, float red, float green, float blue, float alpha) {
+    public void render(MatrixStack stack, VertexConsumer renderContext, int overlay, int light, int color) {
         parts.forEach(part -> {
-            part.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
+            part.render(stack, renderContext, overlay, light, color);
         });
     }
 

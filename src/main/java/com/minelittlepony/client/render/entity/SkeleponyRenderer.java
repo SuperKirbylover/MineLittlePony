@@ -1,5 +1,6 @@
 package com.minelittlepony.client.render.entity;
 
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.SkeleponyModel;
 import com.minelittlepony.client.render.entity.feature.StrayClothingFeature;
@@ -10,10 +11,9 @@ import net.minecraft.entity.mob.*;
 import net.minecraft.util.Identifier;
 
 public class SkeleponyRenderer<Skeleton extends AbstractSkeletonEntity> extends PonyRenderer<Skeleton, SkeleponyModel<Skeleton>> {
-
-    public static final Identifier SKELETON = new Identifier("minelittlepony", "textures/entity/skeleton/skeleton_pony.png");
-    public static final Identifier WITHER = new Identifier("minelittlepony", "textures/entity/skeleton/skeleton_wither_pony.png");
-    public static final Identifier STRAY = new Identifier("minelittlepony", "textures/entity/skeleton/stray_pony.png");
+    public static final Identifier SKELETON = MineLittlePony.id("textures/entity/skeleton/skeleton_pony.png");
+    public static final Identifier WITHER = MineLittlePony.id("textures/entity/skeleton/skeleton_wither_pony.png");
+    public static final Identifier STRAY = MineLittlePony.id("textures/entity/skeleton/stray_pony.png");
 
     public SkeleponyRenderer(EntityRendererFactory.Context context, Identifier texture, float scale) {
         super(context, ModelType.SKELETON, TextureSupplier.of(texture), scale);

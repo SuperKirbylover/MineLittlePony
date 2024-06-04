@@ -4,17 +4,17 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.entity.mob.*;
 import net.minecraft.util.Identifier;
 
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.ZomponyModel;
 import com.minelittlepony.client.render.entity.npc.textures.TextureSupplier;
 
 public class ZomponyRenderer<Zombie extends HostileEntity> extends PonyRenderer<Zombie, ZomponyModel<Zombie>> {
+    public static final Identifier ZOMBIE = MineLittlePony.id("textures/entity/zombie/zombie_pony.png");
+    public static final Identifier HUSK = MineLittlePony.id("textures/entity/zombie/husk_pony.png");
+    public static final Identifier DROWNED = MineLittlePony.id("textures/entity/zombie/drowned_pony.png");
 
-    public static final Identifier ZOMBIE = new Identifier("minelittlepony", "textures/entity/zombie/zombie_pony.png");
-    public static final Identifier HUSK = new Identifier("minelittlepony", "textures/entity/zombie/husk_pony.png");
-    public static final Identifier DROWNED = new Identifier("minelittlepony", "textures/entity/zombie/drowned_pony.png");
-
-    public static final Identifier DEMON_CHILD = new Identifier("minelittlepony", "textures/entity/zombie/demon_child.png");
+    public static final Identifier DEMON_CHILD = MineLittlePony.id("textures/entity/zombie/demon_child.png");
 
     public ZomponyRenderer(EntityRendererFactory.Context context, TextureSupplier<Zombie> texture, float scale) {
         super(context, ModelType.ZOMBIE, texture, scale);

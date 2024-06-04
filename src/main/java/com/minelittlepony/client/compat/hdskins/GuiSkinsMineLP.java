@@ -17,10 +17,10 @@ import net.minecraft.util.Identifier;
  * Skin uploading GUI. Usually displayed over the main menu.
  */
 class GuiSkinsMineLP extends GuiSkins {
-    private static final String[] PANORAMAS = new String[] {
-        "minelittlepony:textures/cubemap/sugarcubecorner",
-        "minelittlepony:textures/cubemap/quillsandsofas",
-        "minelittlepony:textures/cubemap/sweetappleacres"
+    private static final Identifier[] PANORAMAS = new Identifier[] {
+        MineLittlePony.id("textures/cubemap/sugarcubecorner"),
+        MineLittlePony.id("textures/cubemap/quillsandsofas"),
+        MineLittlePony.id("textures/cubemap/sweetappleacres")
     };
 
     public GuiSkinsMineLP(Screen parent, SkinServerList servers) {
@@ -47,7 +47,7 @@ class GuiSkinsMineLP extends GuiSkins {
                 .getStyle()
                     .setIcon(new TextureSprite()
                             .setPosition(2, 2)
-                            .setTexture(new Identifier("minelittlepony", "textures/gui/pony.png"))
+                            .setTexture(MineLittlePony.id("textures/gui/pony.png"))
                             .setTextureSize(16, 16)
                             .setSize(16, 16))
                     .setTooltip("minelp.options.title", 0, 10);
@@ -64,8 +64,6 @@ class GuiSkinsMineLP extends GuiSkins {
 
     @Override
     protected Identifier getBackground() {
-        int i = (int)Math.floor(Math.random() * PANORAMAS.length);
-
-        return new Identifier(PANORAMAS[i]);
+        return PANORAMAS[(int)Math.floor(Math.random() * PANORAMAS.length)];
     }
 }

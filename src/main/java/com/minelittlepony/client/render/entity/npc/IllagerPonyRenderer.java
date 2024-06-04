@@ -1,5 +1,6 @@
 package com.minelittlepony.client.render.entity.npc;
 
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.IllagerPonyModel;
 import com.minelittlepony.client.render.entity.feature.IllagerHeldItemFeature;
@@ -19,9 +20,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class IllagerPonyRenderer<T extends IllagerEntity> extends PonyRenderer<T, IllagerPonyModel<T>> {
-    public static final Identifier ILLUSIONIST = new Identifier("minelittlepony", "textures/entity/illager/illusionist_pony.png");
-    public static final Identifier EVOKER = new Identifier("minelittlepony", "textures/entity/illager/evoker_pony.png");
-    public static final Identifier VINDICATOR = new Identifier("minelittlepony", "textures/entity/illager/vindicator_pony.png");
+    public static final Identifier ILLUSIONIST = MineLittlePony.id("textures/entity/illager/illusionist_pony.png");
+    public static final Identifier EVOKER = MineLittlePony.id("textures/entity/illager/evoker_pony.png");
+    public static final Identifier VINDICATOR = MineLittlePony.id("textures/entity/illager/vindicator_pony.png");
 
     public IllagerPonyRenderer(EntityRendererFactory.Context context, Identifier texture) {
         super(context, ModelType.ILLAGER, TextureSupplier.of(texture), BASE_MODEL_SCALE);

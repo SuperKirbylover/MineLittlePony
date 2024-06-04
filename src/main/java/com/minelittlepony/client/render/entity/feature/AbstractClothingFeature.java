@@ -8,6 +8,7 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 
 import com.minelittlepony.api.model.PonyModel;
@@ -31,7 +32,7 @@ public abstract class AbstractClothingFeature<T extends LivingEntity, M extends 
         overlayModel.setAngles(entity, limbDistance, limbAngle, age, headYaw, headPitch);
 
         VertexConsumer vertexConsumer = renderContext.getBuffer(overlayModel.getLayer(getOverlayTexture()));
-        overlayModel.render(stack, vertexConsumer, lightUv, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+        overlayModel.render(stack, vertexConsumer, lightUv, OverlayTexture.DEFAULT_UV, Colors.WHITE);
     }
 
     protected abstract M getOverlayModel();

@@ -6,13 +6,13 @@ import net.minecraft.client.render.entity.model.ArmorStandEntityModel;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.VexEntity;
 import net.minecraft.entity.passive.*;
-import net.minecraft.util.Identifier;
 
 import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.api.model.gear.*;
 import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.api.pony.meta.Wearable;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.armour.PonyArmourModel;
 import com.minelittlepony.client.model.entity.*;
 import com.minelittlepony.client.model.entity.race.*;
@@ -93,7 +93,7 @@ public final class ModelType {
     @SuppressWarnings("unchecked")
     static <T extends AbstractGearModel> GearModelKey<T> registerGear(String name, Wearable wearable, MsonModel.Factory<T> constructor) {
         return (GearModelKey<T>)GEAR_MODELS.computeIfAbsent(wearable, w -> {
-            return new GearModelKey<T>(Mson.getInstance().registerModel(new Identifier("minelittlepony", "gear/" + name), constructor), constructor);
+            return new GearModelKey<T>(Mson.getInstance().registerModel(MineLittlePony.id("gear/" + name), constructor), constructor);
         });
     }
 
@@ -103,7 +103,7 @@ public final class ModelType {
     }
 
     static <T extends Model> ModelKey<T> register(String name, MsonModel.Factory<T> constructor) {
-        return new ModelKeyImpl<T>(new Identifier("minelittlepony", name), constructor);
+        return new ModelKeyImpl<T>(MineLittlePony.id(name), constructor);
     }
 
     @SuppressWarnings("unchecked")

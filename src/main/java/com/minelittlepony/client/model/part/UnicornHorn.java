@@ -10,7 +10,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import com.minelittlepony.api.model.SubModel;
 import com.minelittlepony.api.model.ModelAttributes;
 import com.minelittlepony.client.render.MagicGlow;
-import com.minelittlepony.common.util.Color;
 
 public class UnicornHorn implements SubModel {
 
@@ -25,8 +24,8 @@ public class UnicornHorn implements SubModel {
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
-        horn.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
+        horn.render(stack, vertices, overlay, light, color);
     }
 
     public void renderMagic(MatrixStack stack, VertexConsumer verts, int tint) {
@@ -34,8 +33,7 @@ public class UnicornHorn implements SubModel {
             Immediate immediate = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 
             VertexConsumer vertices = immediate.getBuffer(MagicGlow.getRenderLayer());
-
-            glow.render(stack, vertices, OverlayTexture.DEFAULT_UV, 0x0F00F0, Color.r(tint), Color.g(tint), Color.b(tint), 0.4F);
+            glow.render(stack, vertices, OverlayTexture.DEFAULT_UV, 0x0F00F0, (tint & 0xFFFFFF) | (102 << 24));
         }
     }
 

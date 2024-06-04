@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceReloadListener {
-    private static final Identifier ID = new Identifier("minelittlepony", "background_ponies");
+    private static final Identifier ID = MineLittlePony.id("background_ponies");
 
     private final PonyConfig config;
 

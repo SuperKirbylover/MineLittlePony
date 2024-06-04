@@ -1,12 +1,12 @@
 package com.minelittlepony.client.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Arrays;
+import java.util.Set;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumers;
 
@@ -25,15 +25,12 @@ abstract class MixinVertextConsumers {
         }
     }
 
-    @Inject(method = "union([" + T + ")" + T, at = @At("HEAD"), cancellable = true)
-    private static void onUnion(VertexConsumer[] delegates, CallbackInfoReturnable<VertexConsumer> info) {
-        int oldLength = delegates.length;
-        delegates = Arrays.stream(delegates).distinct().toArray(VertexConsumer[]::new);
-
-        if (delegates.length == 1) {
-            info.setReturnValue(delegates[0]);
-        } else if (delegates.length != oldLength) {
-            info.setReturnValue(new VertexConsumers.Union(delegates));
+    @ModifyVariable(method = "union([" + T + ")" + T, at = @At("HEAD"), argsOnly = true)
+    private static VertexConsumer[] onUnion(VertexConsumer[] delegates) {
+        Set<VertexConsumer> set = new ObjectArraySet<>(delegates.length);
+        for (VertexConsumer delegate : delegates) {
+            set.add(delegate);
         }
+        return set.toArray(VertexConsumer[]::new);
     }
 }

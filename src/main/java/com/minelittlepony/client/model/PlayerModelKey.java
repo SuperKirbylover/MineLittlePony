@@ -3,12 +3,12 @@ package com.minelittlepony.client.model;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.minelittlepony.api.model.Models;
 import com.minelittlepony.api.model.PonyModel;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.armour.PonyArmourModel;
 import com.minelittlepony.mson.api.*;
 
@@ -21,8 +21,8 @@ public record PlayerModelKey<T extends LivingEntity, M extends Model & PonyModel
 ) {
     PlayerModelKey(String name, BiFunction<ModelPart, Boolean, M> modelFactory, MsonModel.Factory<PonyArmourModel<T>> armorFactory) {
         this(
-            new ModelKeyImpl<>(new Identifier("minelittlepony", "races/steve/" + name), tree -> modelFactory.apply(tree, false)),
-            new ModelKeyImpl<>(new Identifier("minelittlepony", "races/alex/" + name), tree -> modelFactory.apply(tree, true)),
+            new ModelKeyImpl<>(MineLittlePony.id("races/steve/" + name), tree -> modelFactory.apply(tree, false)),
+            new ModelKeyImpl<>(MineLittlePony.id("races/alex/" + name), tree -> modelFactory.apply(tree, true)),
             armorFactory
         );
     }

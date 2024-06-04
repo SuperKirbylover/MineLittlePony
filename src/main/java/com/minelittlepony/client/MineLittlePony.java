@@ -64,7 +64,7 @@ public class MineLittlePony implements ClientModInitializer {
     }
 
     public static Identifier id(String name) {
-        return new Identifier("minelittlepony", name);
+        return Identifier.of("minelittlepony", name);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class MineLittlePony implements ClientModInitializer {
                 button.getStyle()
                         .setIcon(new TextureSprite()
                                 .setPosition(2, 2)
-                                .setTexture(new Identifier("minelittlepony", "textures/gui/pony.png"))
+                                .setTexture(id("textures/gui/pony.png"))
                                 .setTextureSize(16, 16)
                                 .setSize(16, 16))
                         .setTooltip("minelp.options.title", 0, 10);

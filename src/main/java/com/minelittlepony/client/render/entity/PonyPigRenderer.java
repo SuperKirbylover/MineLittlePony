@@ -36,7 +36,7 @@ public class PonyPigRenderer extends PigEntityRenderer {
             model.animateModel(entity, limbAngle, limbDistance, tickDelta);
             model.setAngles(entity, limbAngle, limbDistance, animationProgress, headYaw, headPitch);
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Wearable.CROWN.getDefaultTexture()));
-            model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrices, vertexConsumer, light, OverlayTexture.DEFAULT_UV, 0xFFFFFFFF);
         }
     }
 }

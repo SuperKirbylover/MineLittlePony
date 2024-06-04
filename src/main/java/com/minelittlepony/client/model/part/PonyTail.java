@@ -86,12 +86,12 @@ public class PonyTail implements SubModel, MsonModel {
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
         stack.push();
         tail.rotate(stack);
 
         for (int i = 0; i < segments.size(); i++) {
-            segments.get(i).render(this, stack, vertices, i, overlayUv, lightUv, red, green, blue, alpha, attributes);
+            segments.get(i).render(this, stack, vertices, i, overlay, light, color, attributes);
         }
 
         stack.pop();
@@ -104,7 +104,7 @@ public class PonyTail implements SubModel, MsonModel {
             this.tree = tree;
         }
 
-        public void render(PonyTail tail, MatrixStack stack, VertexConsumer renderContext, int index, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
+        public void render(PonyTail tail, MatrixStack stack, VertexConsumer renderContext, int index, int overlay, int light, int color, ModelAttributes attributes) {
             if (index >= tail.tailStop) {
                 return;
             }
@@ -118,7 +118,7 @@ public class PonyTail implements SubModel, MsonModel {
 
             if (attributes.isHorsey || tail.shape == TailShape.STRAIGHT) {
                 tree.yaw = 0;
-                tree.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
+                tree.render(stack, renderContext, overlay, light, color);
                 return;
             }
 
@@ -145,7 +145,7 @@ public class PonyTail implements SubModel, MsonModel {
                 tree.yaw = 0.2F * (index % 2 - 1);
                 tree.pivotZ = 9;
             }
-            tree.render(stack, renderContext, overlayUv, lightUv, red, green, blue, alpha);
+            tree.render(stack, renderContext, overlay, light, color);
             stack.pop();
         }
     }

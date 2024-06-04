@@ -14,7 +14,7 @@ public interface SubModel {
     /**
      * Renders this model component.
      */
-    void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, float red, float green, float blue, float alpha, ModelAttributes attributes);
+    void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes);
 
     /**
      * Sets whether this part should be rendered.

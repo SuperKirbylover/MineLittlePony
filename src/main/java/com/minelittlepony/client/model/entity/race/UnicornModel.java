@@ -5,8 +5,8 @@ import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.meta.Size;
 import com.minelittlepony.api.pony.meta.SizePreset;
 import com.minelittlepony.client.model.part.UnicornHorn;
-import com.minelittlepony.client.util.render.RenderList;
 import com.minelittlepony.mson.api.ModelView;
+import com.minelittlepony.mson.util.RenderList;
 
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.util.math.MatrixStack;
@@ -35,7 +35,7 @@ public class UnicornModel<T extends LivingEntity> extends EarthPonyModel<T> impl
         super.init(context);
         horn = addPart(context.findByName("horn"));
         headRenderList.add(RenderList.of().add(head::rotate).add(forPart(horn)).checked(() -> getRace().hasHorn()));
-        this.mainRenderList.add(withStage(BodyPart.HEAD, RenderList.of().add(head::rotate).add((stack, vertices, overlayUv, lightUv, red, green, blue, alpha) -> {
+        this.mainRenderList.add(withStage(BodyPart.HEAD, RenderList.of().add(head::rotate).add((stack, vertices, overlay, light, color) -> {
             horn.renderMagic(stack, vertices, getAttributes().metadata.glowColor());
         })).checked(() -> hasMagic() && isCasting()));
     }

@@ -17,7 +17,7 @@ public final class DefaultPonySkinHelper {
     public static final Identifier NIRIK_SKIN_TYPE_ID = id("nirik");
 
     private static final Function<SkinTextures, SkinTextures> SKINS = Util.memoize(original -> new SkinTextures(
-            new Identifier("minelittlepony", original.texture().getPath().replace(".png", "_pony.png")),
+            id(original.texture().getPath().replace(".png", "_pony.png")),
             null,
             null,
             null,
@@ -26,7 +26,7 @@ public final class DefaultPonySkinHelper {
     ));
 
     public static Identifier id(String name) {
-        return new Identifier("minelittlepony", name);
+        return Identifier.of("minelittlepony", name);
     }
 
     public static SkinTextures getTextures(SkinTextures original) {

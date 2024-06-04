@@ -3,6 +3,7 @@ package com.minelittlepony.client.render.entity;
 import org.jetbrains.annotations.NotNull;
 
 import com.minelittlepony.api.model.ModelAttributes;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.mixin.IResizeable;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.GuardianPonyModel;
@@ -17,10 +18,10 @@ import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.util.Identifier;
 
 public class SeaponyRenderer extends GuardianEntityRenderer {
-    public static final Identifier SEAPONY = new Identifier("minelittlepony", "textures/entity/guardian/blueball.png");
-    private static final Identifier SEAPONY_TEXTURES = new Identifier("minelittlepony", "textures/entity/guardian");
-    public static final Identifier ELDER_SEAPONY = new Identifier("minelittlepony", "textures/entity/elder_guardian/blueball.png");
-    private static final Identifier ELDER_SEAPONY_TEXTURES = new Identifier("minelittlepony", "textures/entity/elder_guardian");
+    public static final Identifier SEAPONY = MineLittlePony.id("textures/entity/guardian/blueball.png");
+    private static final Identifier SEAPONY_TEXTURES = MineLittlePony.id("textures/entity/guardian");
+    public static final Identifier ELDER_SEAPONY = MineLittlePony.id("textures/entity/elder_guardian/blueball.png");
+    private static final Identifier ELDER_SEAPONY_TEXTURES = MineLittlePony.id("textures/entity/elder_guardian");
 
     private final AbstractPonyRenderer<GuardianEntity, GuardianPonyModel> ponyRenderer;
 

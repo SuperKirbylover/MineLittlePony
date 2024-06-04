@@ -24,7 +24,7 @@ public interface TextureSupplier<T> extends Function<T, Identifier> {
     Identifier apply(T key);
 
     static TextureSupplier<String> formatted(String domain, String path) {
-        return key -> new Identifier(domain, String.format(path, key));
+        return key -> Identifier.of(domain, String.format(path, key));
     }
 
     static <T extends LivingEntity> TextureSupplier<T> ofVariations(Identifier poolId, TextureSupplier<T> fallback) {

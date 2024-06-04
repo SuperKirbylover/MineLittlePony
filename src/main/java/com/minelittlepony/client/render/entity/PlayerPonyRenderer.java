@@ -10,7 +10,7 @@ import com.minelittlepony.client.model.*;
 import com.minelittlepony.client.render.DebugBoundingBoxRenderer;
 import com.minelittlepony.client.render.PonyRenderContext;
 import com.minelittlepony.client.render.entity.feature.*;
-import com.minelittlepony.client.util.render.RenderLayerUtil;
+import com.minelittlepony.common.util.render.RenderLayerUtil;
 
 import java.util.*;
 import java.util.function.Function;

@@ -37,7 +37,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
         ArmourRendererPlugin plugin = ArmourRendererPlugin.INSTANCE.get();
 
         for (EquipmentSlot i : EquipmentSlot.values()) {
-            if (i.getType() == EquipmentSlot.Type.ARMOR) {
+            if (i.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
                 renderArmor(pony, matrices, provider, light, entity, limbDistance, limbAngle, age, headYaw, headPitch, i, ArmourLayer.INNER, plugin);
                 renderArmor(pony, matrices, provider, light, entity, limbDistance, limbAngle, age, headYaw, headPitch, i, ArmourLayer.OUTER, plugin);
             }
@@ -78,15 +78,11 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                     if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
                         VertexConsumer armorConsumer = plugin.getArmourConsumer(armorSlot, provider, layerTexture.texture(), layer);
                         if (armorConsumer != null) {
-                            float red = 1;
-                            float green = 1;
-                            float blue = 1;
+                            int armorTint = Colors.WHITE;
                             if (armorLayer.isDyeable() && color != Colors.WHITE) {
-                                red = Color.r(color);
-                                green = Color.g(color);
-                                blue = Color.b(color);
+                                armorTint = color;
                             }
-                            m.render(matrices, armorConsumer, light, OverlayTexture.DEFAULT_UV, red, green, blue, alpha);
+                            m.render(matrices, armorConsumer, light, OverlayTexture.DEFAULT_UV, (armorTint & 0xFFFFFF) | ((int)(alpha * 255) << 24));
                         }
                         if (glint) {
                             models.add(m);
@@ -104,7 +100,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                     if (m != null && m.poseModel(entity, limbAngle, limbDistance, age, headYaw, headPitch, armorSlot, layer, pony.body())) {
                         VertexConsumer trimConsumer = plugin.getTrimConsumer(armorSlot, provider, armor.getMaterial(), trim, layer);
                         if (trimConsumer != null) {
-                            m.render(matrices, trimConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+                            m.render(matrices, trimConsumer, light, OverlayTexture.DEFAULT_UV, 0xFFFFFFFF);
                         }
                     }
                 }
@@ -114,7 +110,7 @@ public class ArmourFeature<T extends LivingEntity, M extends EntityModel<T> & Po
                 VertexConsumer glintConsumer = plugin.getGlintConsumer(armorSlot, provider, layer);
                 if (glintConsumer != null) {
                     for (var m : models) {
-                        m.render(matrices, glintConsumer, light, OverlayTexture.DEFAULT_UV, 1, 1, 1, glintAlpha);
+                        m.render(matrices, glintConsumer, light, OverlayTexture.DEFAULT_UV, Color.argbToHex(glintAlpha, 1, 1, 1));
                     }
                 }
             }

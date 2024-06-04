@@ -16,7 +16,7 @@ import com.minelittlepony.client.model.entity.BreezieModel;
  * AKA a breezie :D
  */
 public class AllayRenderer extends MobEntityRenderer<AllayEntity, BreezieModel<AllayEntity>> {
-    public static final Identifier BREEZIE_PONIES = new Identifier("minelittlepony", "textures/entity/allay/pony");
+    public static final Identifier BREEZIE_PONIES = MineLittlePony.id("textures/entity/allay/pony");
 
     public AllayRenderer(EntityRendererFactory.Context context) {
         super(context, ModelType.ALLAY.createModel(), 0.4f);

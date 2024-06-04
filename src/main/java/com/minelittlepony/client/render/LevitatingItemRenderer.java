@@ -4,7 +4,7 @@ import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.model.HornedPonyModel;
 import com.minelittlepony.api.pony.Pony;
 import com.minelittlepony.client.MineLittlePony;
-import com.minelittlepony.client.util.render.RenderLayerUtil;
+import com.minelittlepony.common.util.render.RenderLayerUtil;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +64,7 @@ public class LevitatingItemRenderer {
                             stack.set(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, false);
                         }
 
-                        float tickDelta = MinecraftClient.getInstance().getTickDelta() + entity.age;
+                        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(false) + entity.age;
 
 
                         float driftStrength = 0.002F;

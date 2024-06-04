@@ -4,7 +4,7 @@ import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.events.PonyModelPrepareCallback;
 import com.minelittlepony.api.pony.meta.SizePreset;
 import com.minelittlepony.client.transform.PonyTransformation;
-import com.minelittlepony.client.util.render.RenderList;
+import com.minelittlepony.mson.util.RenderList;
 import com.minelittlepony.util.MathUtil;
 import com.minelittlepony.util.MathUtil.Angles;
 
@@ -71,27 +71,27 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
     }
 
     protected RenderList forPart(Supplier<SubModel> part) {
-        return (stack, vertices, overlayUv, lightUv, red, green, blue, alpha) -> {
-            part.get().renderPart(stack, vertices, overlayUv, lightUv, red, green, blue, alpha, attributes);
+        return (stack, vertices, overlay, light, color) -> {
+            part.get().renderPart(stack, vertices, overlay, light, color, attributes);
         };
     }
 
     protected RenderList forPart(SubModel part) {
-        return (stack, vertices, overlayUv, lightUv, red, green, blue, alpha) -> {
-            part.renderPart(stack, vertices, overlayUv, lightUv, red, green, blue, alpha, attributes);
+        return (stack, vertices, overlay, light, color) -> {
+            part.renderPart(stack, vertices, overlay, light, color, attributes);
         };
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha) {
-        mainRenderList.accept(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color) {
+        mainRenderList.accept(stack, vertices, overlay, light, color);
     }
 
     protected RenderList withStage(BodyPart part, RenderList action) {
-        return (stack, vertices, overlayUv, lightUv, red, green, blue, alpha) -> {
+        return (stack, vertices, overlay, light, color) -> {
             stack.push();
             transform(part, stack);
-            action.accept(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+            action.accept(stack, vertices, overlay, light, color);
             stack.pop();
         };
     }

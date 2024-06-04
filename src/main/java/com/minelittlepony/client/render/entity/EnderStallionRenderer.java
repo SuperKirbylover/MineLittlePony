@@ -1,5 +1,6 @@
 package com.minelittlepony.client.render.entity;
 
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.EnderStallionModel;
 import com.minelittlepony.client.render.entity.feature.GlowingEyesFeature;
@@ -19,9 +20,8 @@ import net.minecraft.util.Identifier;
 import java.util.Random;
 
 public class EnderStallionRenderer extends PonyRenderer<EndermanEntity, EnderStallionModel> implements IGlowingRenderer {
-
-    public static final Identifier ENDERMAN = new Identifier("minelittlepony", "textures/entity/enderman/enderman_pony.png");
-    private static final Identifier EYES = new Identifier("minelittlepony", "textures/entity/enderman/enderman_pony_eyes.png");
+    public static final Identifier ENDERMAN = MineLittlePony.id("textures/entity/enderman/enderman_pony.png");
+    private static final Identifier EYES = MineLittlePony.id("textures/entity/enderman/enderman_pony_eyes.png");
 
     private final Random rnd = new Random();
 

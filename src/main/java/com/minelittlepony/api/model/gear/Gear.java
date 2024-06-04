@@ -92,7 +92,7 @@ public interface Gear {
     /**
      * Renders this model component.
      */
-    void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, UUID interpolatorId);
+    void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, UUID interpolatorId);
 
     /**
      * A render context for instance of IGear.

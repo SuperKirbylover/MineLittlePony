@@ -3,20 +3,22 @@ package com.minelittlepony.api.pony.meta;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ColorHelper;
 
+import com.minelittlepony.api.pony.DefaultPonySkinHelper;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Wearable implements TValue<Wearable> {
     NONE              (0x00, null),
-    CROWN             (0x16, new Identifier("minelittlepony", "textures/models/crown.png")),
-    MUFFIN            (0x32, new Identifier("minelittlepony", "textures/models/muffin.png")),
-    HAT               (0x64, new Identifier("textures/entity/witch.png")),
-    ANTLERS           (0x96, new Identifier("minelittlepony", "textures/models/antlers.png")),
-    SADDLE_BAGS_LEFT  (0xC6, new Identifier("minelittlepony", "textures/models/saddlebags.png")),
-    SADDLE_BAGS_RIGHT (0xC7, new Identifier("minelittlepony", "textures/models/saddlebags.png")),
-    SADDLE_BAGS_BOTH  (0xC8, new Identifier("minelittlepony", "textures/models/saddlebags.png")),
-    STETSON           (0xFA, new Identifier("minelittlepony", "textures/models/stetson.png"));
+    CROWN             (0x16, DefaultPonySkinHelper.id("textures/models/crown.png")),
+    MUFFIN            (0x32, DefaultPonySkinHelper.id("textures/models/muffin.png")),
+    HAT               (0x64, Identifier.ofVanilla("textures/entity/witch.png")),
+    ANTLERS           (0x96, DefaultPonySkinHelper.id("textures/models/antlers.png")),
+    SADDLE_BAGS_LEFT  (0xC6, DefaultPonySkinHelper.id("textures/models/saddlebags.png")),
+    SADDLE_BAGS_RIGHT (0xC7, DefaultPonySkinHelper.id("textures/models/saddlebags.png")),
+    SADDLE_BAGS_BOTH  (0xC8, DefaultPonySkinHelper.id("textures/models/saddlebags.png")),
+    STETSON           (0xFA, DefaultPonySkinHelper.id("textures/models/stetson.png"));
 
     private int triggerValue;
 
@@ -29,7 +31,7 @@ public enum Wearable implements TValue<Wearable> {
 
     Wearable(int pixel, Identifier texture) {
         triggerValue = pixel;
-        id = new Identifier("minelittlepony", name().toLowerCase(Locale.ROOT));
+        id = DefaultPonySkinHelper.id(name().toLowerCase(Locale.ROOT));
         this.texture = texture;
     }
 

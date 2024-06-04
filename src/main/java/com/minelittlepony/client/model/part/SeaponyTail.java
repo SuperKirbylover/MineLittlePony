@@ -39,8 +39,8 @@ public class SeaponyTail implements SubModel, MsonModel {
     }
 
     @Override
-    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, ModelAttributes attributes) {
-        tailBase.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+    public void renderPart(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, ModelAttributes attributes) {
+        tailBase.render(stack, vertices, overlay, light, color);
     }
 
 }

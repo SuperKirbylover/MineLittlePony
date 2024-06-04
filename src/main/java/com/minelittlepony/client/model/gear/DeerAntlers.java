@@ -10,7 +10,6 @@ import com.minelittlepony.api.model.BodyPart;
 import com.minelittlepony.api.model.PonyModel;
 import com.minelittlepony.api.model.gear.WearableGear;
 import com.minelittlepony.api.pony.meta.Wearable;
-import com.minelittlepony.common.util.Color;
 
 import java.util.Calendar;
 import java.util.UUID;
@@ -63,14 +62,12 @@ public class DeerAntlers extends WearableGear {
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha, UUID interpolatorId) {
+    public void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color, UUID interpolatorId) {
         if (tint != 0) {
-            red = Color.r(tint);
-            green = Color.g(tint);
-            blue = Color.b(tint);
+            color = tint;
         }
 
-        left.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
-        right.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+        left.render(stack, vertices, overlay, light, color);
+        right.render(stack, vertices, overlay, light, color);
     }
 }

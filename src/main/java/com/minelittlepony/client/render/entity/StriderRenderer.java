@@ -13,10 +13,10 @@ import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.model.ModelType;
 
 public class StriderRenderer extends MobEntityRenderer<StriderEntity, EntityModel<StriderEntity>> {
-    public static final Identifier DRAGON_PONIES = new Identifier("minelittlepony", "textures/entity/strider/pony");
-    public static final Identifier COLD_DRAGON_PONIES = new Identifier("minelittlepony", "textures/entity/strider/cold_pony");
+    public static final Identifier DRAGON_PONIES = MineLittlePony.id("textures/entity/strider/pony");
+    public static final Identifier COLD_DRAGON_PONIES = MineLittlePony.id("textures/entity/strider/cold_pony");
 
-    private static final Identifier SADDLE = new Identifier("minelittlepony", "textures/entity/strider/strider_saddle_pony.png");
+    private static final Identifier SADDLE = MineLittlePony.id("textures/entity/strider/strider_saddle_pony.png");
 
     public StriderRenderer(EntityRendererFactory.Context context) {
         super(context, ModelType.STRIDER.createModel(), 0.5F);

@@ -65,7 +65,7 @@ public class Channel {
     }
 
     record PonyDataPayload(PonyData data) implements CustomPayload {
-        public static final Id<PonyDataPayload> ID = new Id<>(new Identifier("minelittlepony", "pony_data"));
+        public static final Id<PonyDataPayload> ID = new Id<>(Identifier.of("minelittlepony", "pony_data"));
         public static final PacketCodec<PacketByteBuf, PonyDataPayload> CODEC = CustomPayload.codecOf(
                 (p, buffer) -> MsgPonyData.write(p.data(), buffer),
                 buffer -> new PonyDataPayload(MsgPonyData.read(buffer))
@@ -79,7 +79,7 @@ public class Channel {
 
     record PonyDataRequest() implements CustomPayload {
         public static final PonyDataRequest INSTANCE = new PonyDataRequest();
-        private static final Id<PonyDataRequest> ID = new Id<>(new Identifier("minelittlepony", "request_pony_data"));
+        private static final Id<PonyDataRequest> ID = new Id<>(Identifier.of("minelittlepony", "request_pony_data"));
         public static final PacketCodec<PacketByteBuf, PonyDataRequest> CODEC = PacketCodec.unit(INSTANCE);
 
         @Override

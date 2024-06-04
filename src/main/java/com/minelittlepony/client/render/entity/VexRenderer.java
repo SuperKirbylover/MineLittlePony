@@ -11,7 +11,7 @@ import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.entity.ParaspriteModel;
 
 public class VexRenderer extends MobEntityRenderer<VexEntity, ParaspriteModel<VexEntity>> {
-    public static final Identifier PARASPRITE_PONIES = new Identifier("minelittlepony", "textures/entity/illager/vex_pony");
+    public static final Identifier PARASPRITE_PONIES = MineLittlePony.id("textures/entity/illager/vex_pony");
 
     public VexRenderer(EntityRendererFactory.Context context) {
         super(context, ModelType.VEX.createModel(), 0.3F);

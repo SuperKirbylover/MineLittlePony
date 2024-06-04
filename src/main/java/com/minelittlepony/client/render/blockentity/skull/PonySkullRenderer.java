@@ -7,6 +7,7 @@ import com.minelittlepony.client.model.armour.ArmourLayer;
 import com.minelittlepony.client.model.armour.ArmourRendererPlugin;
 import com.minelittlepony.client.render.MobRenderers;
 import com.minelittlepony.client.render.entity.*;
+import com.minelittlepony.common.util.Color;
 
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.SkullBlock;
@@ -88,7 +89,7 @@ public class PonySkullRenderer {
     public boolean renderSkull(@Nullable Direction direction,
             float yaw, float animationProgress,
             MatrixStack stack, VertexConsumerProvider renderContext, RenderLayer layer,
-            int lightUv) {
+            int light) {
 
         if (selectedSkull == null || !selectedSkull.canRender(PonyConfig.getInstance()) || !selectedSkull.bindPony(Pony.getManager().getPony(selectedSkin))) {
             return false;
@@ -111,7 +112,7 @@ public class PonySkullRenderer {
         VertexConsumer vertices = renderContext.getBuffer(layer);
 
         selectedSkull.setAngles(yaw, animationProgress);
-        selectedSkull.render(stack, vertices, lightUv, OverlayTexture.DEFAULT_UV, 1, 1, 1, ArmourRendererPlugin.INSTANCE.get().getArmourAlpha(EquipmentSlot.HEAD, ArmourLayer.OUTER));
+        selectedSkull.render(stack, vertices, light, OverlayTexture.DEFAULT_UV, Color.argbToHex(ArmourRendererPlugin.INSTANCE.get().getArmourAlpha(EquipmentSlot.HEAD, ArmourLayer.OUTER), 1, 1, 1));
 
         stack.pop();
 
@@ -126,7 +127,7 @@ public class PonySkullRenderer {
     public interface ISkull {
         void setAngles(float angle, float poweredTicks);
 
-        void render(MatrixStack stack, VertexConsumer vertices, int lightUv, int overlayUv, float red, float green, float blue, float alpha);
+        void render(MatrixStack stack, VertexConsumer vertices, int light, int overlay, int color);
 
         boolean canRender(PonyConfig config);
 

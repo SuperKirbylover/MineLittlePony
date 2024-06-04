@@ -48,10 +48,10 @@ public class EnderStallionModel extends SkeleponyModel<EndermanEntity> {
     }
 
     @Override
-    public void render(MatrixStack stack, VertexConsumer vertices, int overlayUv, int lightUv, float red, float green, float blue, float alpha) {
+    public void render(MatrixStack stack, VertexConsumer vertices, int overlay, int light, int color) {
         stack.push();
         stack.translate(0, -1.15F, 0);
-        super.render(stack, vertices, overlayUv, lightUv, red, green, blue, alpha);
+        super.render(stack, vertices, overlay, light, color);
         stack.pop();
     }
 

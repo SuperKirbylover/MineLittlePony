@@ -8,8 +8,7 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerDataContainer;
@@ -17,6 +16,7 @@ import net.minecraft.village.VillagerProfession;
 import net.minecraft.village.VillagerType;
 
 import com.minelittlepony.api.model.PonyModel;
+import com.minelittlepony.client.MineLittlePony;
 import com.minelittlepony.client.render.PonyRenderContext;
 import com.minelittlepony.client.render.entity.feature.AbstractPonyFeature;
 import com.minelittlepony.client.util.render.TextureFlattener;
@@ -30,11 +30,11 @@ class NpcClothingFeature<
         C extends FeatureRendererContext<T, M> & PonyRenderContext<T, M>> extends AbstractPonyFeature<T, M> {
 
     private static final Int2ObjectMap<Identifier> LEVEL_TO_ID = Util.make(new Int2ObjectOpenHashMap<>(), a -> {
-        a.put(1, new Identifier("stone"));
-        a.put(2, new Identifier("iron"));
-        a.put(3, new Identifier("gold"));
-        a.put(4, new Identifier("emerald"));
-        a.put(5, new Identifier("diamond"));
+        a.put(1, Identifier.ofVanilla("stone"));
+        a.put(2, Identifier.ofVanilla("iron"));
+        a.put(3, Identifier.ofVanilla("gold"));
+        a.put(4, Identifier.ofVanilla("emerald"));
+        a.put(5, Identifier.ofVanilla("diamond"));
     });
     private final Set<Identifier> loadedTextures = new HashSet<>();
 
@@ -59,9 +59,9 @@ class NpcClothingFeature<
             if (!ResourceUtil.textureExists(typeSkin)) {
                 typeSkin = createTexture("type", Registries.VILLAGER_TYPE.getId(VillagerType.PLAINS));
             }
-            renderModel(entityModel, typeSkin, matrixStack, provider, i, entity, 1, 1, 1);
+            renderModel(entityModel, typeSkin, matrixStack, provider, i, entity, Colors.WHITE);
         } else {
-            renderModel(entityModel, getMergedTexture(data), matrixStack, provider, i, entity, 1, 1, 1);
+            renderModel(entityModel, getMergedTexture(data), matrixStack, provider, i, entity, Colors.WHITE);
         }
     }
 
@@ -73,7 +73,7 @@ class NpcClothingFeature<
         Identifier typeId = Registries.VILLAGER_TYPE.getId(type);
         Identifier profId = Registries.VILLAGER_PROFESSION.getId(profession);
 
-        Identifier key = new Identifier("minelittlepony", (typeId + "/" + profId + "/" + level).replace(':', '_'));
+        Identifier key = MineLittlePony.id((typeId + "/" + profId + "/" + level).replace(':', '_'));
 
         if (loadedTextures.add(key) && !ResourceUtil.textureExists(key)) {
             TextureFlattener.flatten(computeTextures(typeId, profId, profession == VillagerProfession.NITWIT ? -1 : level), key);
@@ -91,7 +91,7 @@ class NpcClothingFeature<
         }
 
         Identifier profTexture = createTexture("profession", profId);
-        skins.add(ResourceUtil.textureExists(profTexture) ? profTexture : createTexture("profession", new Identifier(VillagerProfession.NITWIT.id())));
+        skins.add(ResourceUtil.textureExists(profTexture) ? profTexture : createTexture("profession", Identifier.of(VillagerProfession.NITWIT.id())));
 
         if (level != -1) {
             skins.add(createTexture("profession_level", LEVEL_TO_ID.get(level)));
@@ -105,6 +105,6 @@ class NpcClothingFeature<
     }
 
     private Identifier createTexture(String category, Identifier identifier) {
-        return new Identifier("minelittlepony", String.format("textures/entity/%s/%s/%s.png", entityType, category, identifier.getPath()));
+        return MineLittlePony.id(String.format("textures/entity/%s/%s/%s.png", entityType, category, identifier.getPath()));
     }
 }

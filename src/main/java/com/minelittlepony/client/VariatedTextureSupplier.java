@@ -11,9 +11,9 @@ import com.minelittlepony.util.MathUtil;
 import java.util.*;
 
 public class VariatedTextureSupplier implements SimpleSynchronousResourceReloadListener {
-    private static final Identifier ID = new Identifier("minelittlepony", "variated_textures");
-    public static final Identifier BACKGROUND_PONIES_POOL = new Identifier("minelittlepony", "textures/entity/pony");
-    public static final Identifier BACKGROUND_ZOMPONIES_POOL = new Identifier("minelittlepony", "textures/entity/zompony");
+    private static final Identifier ID = MineLittlePony.id("variated_textures");
+    public static final Identifier BACKGROUND_PONIES_POOL = MineLittlePony.id("textures/entity/pony");
+    public static final Identifier BACKGROUND_ZOMPONIES_POOL = MineLittlePony.id("textures/entity/zompony");
 
     private final Map<Identifier, SkinList> entries = new HashMap<>();
 
