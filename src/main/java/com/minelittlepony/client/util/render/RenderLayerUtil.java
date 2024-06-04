@@ -4,6 +4,7 @@ import java.util.Optional;
 import net.minecraft.client.render.*;
 import net.minecraft.util.Identifier;
 
+@Deprecated
 public interface RenderLayerUtil {
     static Optional<Identifier> getTexture(RenderLayer layer) {
         if (layer instanceof RenderLayer.MultiPhase multiphase) {
