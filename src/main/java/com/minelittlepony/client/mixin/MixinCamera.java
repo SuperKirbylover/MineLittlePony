@@ -12,11 +12,11 @@ import net.minecraft.client.render.Camera;
 
 @Mixin(Camera.class)
 abstract class MixinCamera {
-    @Inject(method = "clipToSpace(D)D",
+    @Inject(method = "clipToSpace(F)F",
             at = @At("RETURN"),
             cancellable = true)
-    private void redirectCameraDistance(double initial, CallbackInfoReturnable<Double> info) {
-        double value = info.getReturnValueD();
+    private void redirectCameraDistance(float initial, CallbackInfoReturnable<Float> info) {
+        float value = info.getReturnValueF();
 
         Pony pony = Pony.getManager().getPony(MinecraftClient.getInstance().player);
 
