@@ -6,3 +6,7 @@
 	path = plugins/ShowMeYourPonies
 	url = https://github.com/MineLittlePony/ShowMeYourPonies.git
 	branch = 1.20.5
+[submodule "plugins/Sockies"]
+	path = plugins/Sockies
+	url = https://github.com/MineLittlePony/Sockies.git
+	branch = 1.21
