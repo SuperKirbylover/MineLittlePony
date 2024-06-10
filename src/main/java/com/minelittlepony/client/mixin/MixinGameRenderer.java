@@ -13,12 +13,12 @@ import com.minelittlepony.api.model.RenderPass;
 @Mixin(GameRenderer.class)
 abstract class MixinGameRenderer {
     @Inject(method = "renderWorld", at = @At("HEAD"))
-    private void beforeRenderWorld(float tickDelta, long limitTime, CallbackInfo info) {
+    private void beforeRenderWorld(RenderTickCounter counter, CallbackInfo info) {
         RenderPass.swap(RenderPass.WORLD);
     }
 
     @Inject(method = "renderWorld", at = @At("RETURN"))
-    private void afterRenderWorld(float tickDelta, long limitTime, CallbackInfo info) {
+    private void afterRenderWorld(RenderTickCounter counter, CallbackInfo info) {
         RenderPass.swap(RenderPass.GUI);
     }
 }
@@ -30,8 +30,8 @@ abstract class MixinWorldRenderer {
             target = "net.minecraft.client.render.VertexConsumerProvider$Immediate.drawCurrentLayer()V",
             ordinal = 0
     ))
-    private void onRender(      float tickDelta,
-            long limitTime,
+    private void onRender(
+            RenderTickCounter counter,
             boolean renderBlockOutline,
             Camera camera,
             GameRenderer gameRenderer,
