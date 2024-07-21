@@ -6,7 +6,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
 import com.minelittlepony.api.model.SubModel;
-import com.minelittlepony.api.pony.meta.Race;
 import com.minelittlepony.api.model.ModelAttributes;
 import com.minelittlepony.mson.api.*;
 import com.minelittlepony.mson.api.model.PartBuilder;
@@ -32,18 +31,13 @@ public class PonyEars implements SubModel, MsonModel {
         right.resetTransform();
         left.resetTransform();
 
-        if (attributes.metadata.race() == Race.CHANGEDLING
-            || attributes.metadata.race() == Race.CHANGELING) {
-            return;
-        }
-
         limbSpeed = MathHelper.clamp(limbSpeed, 0, 1);
 
         float forwardFold = 0.14F * limbSpeed;
         float sidewaysFlop = 0.11F * limbSpeed;
 
-        right.pitch = forwardFold;
-        left.pitch = forwardFold;
+        right.pitch += forwardFold;
+        left.pitch += forwardFold;
 
         right.roll -= sidewaysFlop;
         left.roll  += sidewaysFlop;
