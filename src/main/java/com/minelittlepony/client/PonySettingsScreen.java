@@ -136,10 +136,11 @@ public class PonySettingsScreen extends GameGui {
 
         if (hiddenOptions) {
             for (Setting<?> i : config.getCategory("customisation").entries()) {
-                Button button = content
-                    .addButton(new Toggle(LEFT, row += 20, ((Setting<Boolean>)i).get()))
-                    .onChange((Setting<Boolean>)i);
-                button.getStyle().setText(OPTIONS_PREFIX + i.name().toLowerCase());
+                if (i.get() instanceof Boolean value) {
+                    content.addButton(new Toggle(LEFT, row += 20, value))
+                        .onChange((Setting<Boolean>)i)
+                        .getStyle().setText(OPTIONS_PREFIX + i.name().toLowerCase());
+                }
             }
         }
 
