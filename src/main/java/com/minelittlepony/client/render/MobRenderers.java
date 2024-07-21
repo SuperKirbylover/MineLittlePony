@@ -15,7 +15,7 @@ import net.minecraft.entity.EntityType;
 /**
  * Central location where new entity renderers are registered and applied.
  */
-public final class MobRenderers {
+public class MobRenderers {
     public static final Map<String, MobRenderers> REGISTRY = new HashMap<>();
 
     public static final MobRenderers VILLAGER = register("villagers", (state, pony) -> {

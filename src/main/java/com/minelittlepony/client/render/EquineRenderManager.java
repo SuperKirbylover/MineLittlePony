@@ -5,13 +5,16 @@ import com.minelittlepony.api.events.Channel;
 import com.minelittlepony.api.events.PonyDataCallback;
 import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.Pony;
+import com.minelittlepony.api.pony.PonyData;
+import com.minelittlepony.client.PonyDataLoader;
 import com.minelittlepony.client.transform.PonyPosture;
 import com.minelittlepony.mson.api.ModelKey;
 import com.minelittlepony.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import net.fabricmc.api.EnvType;
 import net.minecraft.client.MinecraftClient;
@@ -78,10 +81,6 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
         }
         models.applyMetadata(pony.metadata());
         models.body().updateLivingState(entity, pony, mode);
-
-        if (entity instanceof PlayerEntity player && entity instanceof RegistrationHandler handler) {
-            handler.getSyncedPony().synchronize(player, pony);
-        }
     }
 
     public void setupTransforms(T entity, MatrixStack stack, float animationProgress, float bodyYaw, float tickDelta, float scale) {
@@ -152,14 +151,25 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
     public static class SyncedPony {
         @Nullable
         private Pony lastRenderedPony;
+        private Supplier<Optional<PonyData>> lastPonyData = PonyDataLoader.NULL;
         @Nullable
         private Pony lastTransmittedPony;
 
-        public void synchronize(PlayerEntity player, Pony pony) {
+        public Pony getCachedPony() {
+            return lastRenderedPony;
+        }
+
+        public PonyData getCachedPonyData() {
+            return lastPonyData.get().orElse(PonyData.NULL);
+        }
+
+        public void synchronize(PlayerEntity player) {
+            Pony pony = Pony.getManager().getPony(player);
             boolean changed = pony.compareTo(lastRenderedPony) != 0;
 
             if (changed) {
                 lastRenderedPony = pony;
+                lastPonyData = pony.metadataGetter();
                 player.calculateDimensions();
             }
 

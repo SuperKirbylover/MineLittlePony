@@ -6,22 +6,35 @@ import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.minelittlepony.api.pony.Pony;
+import com.minelittlepony.client.render.EquineRenderManager.RegistrationHandler;
+import com.minelittlepony.client.render.EquineRenderManager.SyncedPony;
 
 @Mixin(PlayerEntity.class)
-abstract class MixinPlayerEntity {
+abstract class MixinPlayerEntity extends LivingEntity implements RegistrationHandler {
+    MixinPlayerEntity() { super(null, null); }
+
+    private final SyncedPony syncedPony = new SyncedPony();
+
+    @Override
+    public SyncedPony getSyncedPony() {
+        return syncedPony;
+    }
+
     @Inject(method = "getBaseDimensions", at = @At("RETURN"), cancellable = true)
     private void onGetBaseDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> info) {
-        Pony pony = Pony.getManager().getPony((PlayerEntity)(Object)this);
+        float factor = syncedPony.getCachedPonyData().size().eyeHeightFactor();
 
-        if (!pony.race().isHuman()) {
-            float factor = pony.size().eyeHeightFactor();
-            if (factor != 1) {
-                EntityDimensions dimensions = info.getReturnValue();
-                info.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * factor));
-            }
+        if (factor != 1) {
+            EntityDimensions dimensions = info.getReturnValue();
+            info.setReturnValue(dimensions.withEyeHeight(dimensions.eyeHeight() * factor));
         }
+    }
+
+    @Inject(method = "tick()V", at = @At("TAIL"))
+    private void onTick(CallbackInfo info) {
+        syncedPony.synchronize((PlayerEntity)(Object)this);
     }
 }

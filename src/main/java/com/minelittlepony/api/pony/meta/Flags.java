@@ -27,7 +27,7 @@ public record Flags<T extends Enum<T> & TValue<T>> (
         for (int i = 0; i < length; i++) {
             values.add(all[buffer.readInt()]);
         }
-        return new Flags<>(def, values, buffer.readInt());
+        return of(def, buffer.readInt(), values);
     }
 
     public void write(PacketByteBuf buffer) {

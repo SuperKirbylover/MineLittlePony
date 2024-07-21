@@ -15,12 +15,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -29,22 +29,21 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
 
     private final PonyConfig config;
 
-    private final LoadingCache<Identifier, Pony> defaultedPoniesCache = CacheBuilder.newBuilder()
+    private final LoadingCache<Key, Pony> poniesCache = CacheBuilder.newBuilder()
             .expireAfterAccess(30, TimeUnit.SECONDS)
-            .build(CacheLoader.from(resource -> new Pony(resource, PonyDataLoader.parse(resource, true))));
+            .build(CacheLoader.from(key -> new Pony(key.texture(), PonyDataLoader.parse(key.texture(), key.defaulted()))));
+    private final WeakHashMap<UUID, Pony> playerPonies = new WeakHashMap<>();
 
-    private final LoadingCache<Identifier, Pony> poniesCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(30, TimeUnit.SECONDS)
-            .build(CacheLoader.from(resource -> new Pony(resource, PonyDataLoader.parse(resource, false))));
+    record Key(Identifier texture, @Nullable UUID uuid, boolean defaulted) {}
 
     public PonyManagerImpl(PonyConfig config) {
         this.config = config;
         Instance.instance = this;
     }
 
-    private Pony loadPony(Identifier resource, boolean defaulted) {
+    private Pony loadPony(Identifier resource, @Nullable UUID uuid, boolean defaulted) {
         try {
-            return (defaulted ? defaultedPoniesCache : poniesCache).get(resource);
+            return poniesCache.get(new Key(resource, uuid, defaulted));
         } catch (ExecutionException e) {
             return new Pony(resource, PonyDataLoader.NULL);
         }
@@ -52,13 +51,26 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
 
     @Override
     public Pony getPony(PlayerEntity player) {
-        final UUID id = player instanceof ForcedPony ? null : player.getGameProfile() == null ? player.getUuid() : player.getGameProfile().getId();
+        final UUID id = player instanceof ForcedPony ? null : player.getGameProfile() == null || player.getGameProfile().getId() == null ? player.getUuid() : player.getGameProfile().getId();
+
+        Pony pony;
+        if (player instanceof ServerPlayerEntity && id != null) {
+            pony = playerPonies.get(id);
+            if (pony != null) {
+                return pony;
+            }
+        }
+
         @Nullable
         Identifier skin = getSkin(player);
         if (skin != null) {
             skin = MoreObjects.firstNonNull(PonySkinResolver.EVENT.invoker().onPonySkinResolving(player, s -> getPony(s, id), skin), skin);
         }
-        return getPony(skin, id);
+        pony = getPony(skin, id);
+        if (!(player instanceof ServerPlayerEntity) && id != null) {
+            playerPonies.put(id, pony);
+        }
+        return pony;
     }
 
     @Override
@@ -77,10 +89,10 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
     @Override
     public Pony getPony(@Nullable Identifier resource, @Nullable UUID uuid) {
         if (resource == null) {
-            return uuid == null ? loadPony(DefaultSkinHelper.getTexture(), true) : getBackgroundPony(uuid);
+            return uuid == null ? loadPony(DefaultSkinHelper.getTexture(), uuid, true) : getBackgroundPony(uuid);
         }
 
-        Pony pony = loadPony(resource, false);
+        Pony pony = loadPony(resource, uuid, false);
 
         if (uuid != null && PonyConfig.getInstance().ponyLevel.get() == PonyLevel.PONIES && pony.metadata().race().isHuman()) {
             return getBackgroundPony(uuid);
@@ -91,9 +103,9 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
     @Override
     public Pony getBackgroundPony(@Nullable UUID uuid) {
         if (config.ponyLevel.get() == PonyLevel.PONIES) {
-            return loadPony(MineLittlePony.getInstance().getVariatedTextures().get(VariatedTextureSupplier.BACKGROUND_PONIES_POOL, uuid).orElse(DefaultSkinHelper.getSkinTextures(uuid).texture()), true);
+            return loadPony(MineLittlePony.getInstance().getVariatedTextures().get(VariatedTextureSupplier.BACKGROUND_PONIES_POOL, uuid).orElse(DefaultSkinHelper.getSkinTextures(uuid).texture()), uuid, true);
         }
-        return loadPony(DefaultSkinHelper.getSkinTextures(uuid).texture(), true);
+        return loadPony(DefaultSkinHelper.getSkinTextures(uuid).texture(), uuid, true);
     }
 
     @Nullable
@@ -113,13 +125,11 @@ public class PonyManagerImpl implements PonyManager, SimpleSynchronousResourceRe
 
     public void removePony(Identifier resource) {
         poniesCache.invalidate(resource);
-        defaultedPoniesCache.invalidate(resource);
     }
 
     public void clearCache() {
-        MineLittlePony.logger.info("Flushed {} cached ponies.", poniesCache.size());
+        MineLittlePony.logger.info("Turned {} cached ponies into cupcakes.", poniesCache.size());
         poniesCache.invalidateAll();
-        defaultedPoniesCache.invalidateAll();
     }
 
     @Override

@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
-class PonyDataLoader {
-    static final Supplier<Optional<PonyData>> NULL = loaded(PonyData.NULL);
+public class PonyDataLoader {
+    public static final Supplier<Optional<PonyData>> NULL = loaded(PonyData.NULL);
     private static final ResourceMetadataReader<PonyData> SERIALIZER = new ResourceMetadataReader<PonyData>() {
         private static final Gson GSON = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
