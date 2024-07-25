@@ -90,6 +90,7 @@ public class MineLittlePony implements ClientModInitializer {
         ScreenInitCallback.EVENT.register(this::onScreenInit);
 
         config.load();
+        config.onChangedExternally(c -> initialized = false);
 
         Channel.bootstrap();
         ModelType.bootstrap();
@@ -101,6 +102,10 @@ public class MineLittlePony implements ClientModInitializer {
         if (!initialized) {
             initialized = true;
             renderDispatcher.initialise(client.getEntityRenderDispatcher(), false);
+
+            if (client.currentScreen instanceof PonySettingsScreen screen) {
+                screen.init(client, screen.width, screen.height);
+            }
         }
 
         boolean inGame = client.world != null && client.player != null && client.currentScreen == null;

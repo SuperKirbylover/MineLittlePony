@@ -75,7 +75,7 @@ public class ArmourTextureResolver implements ArmourTextureLookup, IdentifiableR
                 .filter(ArmourTexture::validate)
                 .findFirst()
                 .or(() -> {
-            MineLittlePony.logger.warn("Could not identify correct texture to use for {}. Was none of: [" + System.lineSeparator() + "{}" + System.lineSeparator() + "]", id, options.stream()
+            MineLittlePony.LOGGER.warn("Could not identify correct texture to use for {}. Was none of: [" + System.lineSeparator() + "{}" + System.lineSeparator() + "]", id, options.stream()
                     .map(ArmourTexture::texture)
                     .map(Identifier::toString)
                     .collect(Collectors.joining("," + System.lineSeparator())));
