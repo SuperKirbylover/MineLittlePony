@@ -46,7 +46,7 @@ public class PonyDataLoader {
             try {
                 return res.getMetadata().decode(SERIALIZER);
             } catch (IOException e) {
-                MineLittlePony.logger.warn("Unable to read {} metadata", identifier, e);
+                MineLittlePony.LOGGER.warn("Unable to read {} metadata", identifier, e);
             }
             return Optional.empty();
         }).map(PonyDataLoader::loaded).orElseGet(() -> {
@@ -54,7 +54,7 @@ public class PonyDataLoader {
                 NativeUtil.parseImage(identifier, image -> {
                     callback.accept(new PonyData(image, noSkin));
                 }, e -> {
-                    MineLittlePony.logger.fatal("Unable to read {} metadata", identifier, e);
+                    MineLittlePony.LOGGER.fatal("Unable to read {} metadata", identifier, e);
                     callback.accept(PonyData.NULL);
                 });
             });

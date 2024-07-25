@@ -39,7 +39,7 @@ public class MineLittlePony implements ClientModInitializer {
 
     private static MineLittlePony instance;
 
-    public static final Logger logger = LogManager.getLogger("MineLittlePony");
+    public static final Logger LOGGER = LogManager.getLogger("MineLittlePony");
 
     private PonyManagerImpl ponyManager;
     private VariatedTextureSupplier variatedTextures;

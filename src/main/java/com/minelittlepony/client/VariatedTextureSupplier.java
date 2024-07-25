@@ -75,7 +75,7 @@ public class VariatedTextureSupplier implements SimpleSynchronousResourceReloadL
         public void reloadAll(ResourceManager resourceManager) {
             textures.clear();
             textures.addAll(resourceManager.findResources(id.getPath(), path -> path.getPath().endsWith(".png")).keySet());
-            MineLittlePony.logger.info("Detected {} ponies installed at {}.", textures.size(), id);
+            MineLittlePony.LOGGER.info("Detected {} ponies installed at {}.", textures.size(), id);
         }
 
         static boolean isUser(UUID uuid) {

@@ -26,13 +26,13 @@ class GuiSkinsMineLP extends GuiSkins {
     public GuiSkinsMineLP(Screen parent, SkinServerList servers) {
         super(parent, servers);
         chooser.addSkinChangedEventListener(type -> {
-            MineLittlePony.logger.debug("Invalidating old local skin, checking updated local skin");
+            MineLittlePony.LOGGER.debug("Invalidating old local skin, checking updated local skin");
             if (type == SkinType.SKIN) {
                 MineLittlePony.getInstance().getManager().removePony(previewer.getLocal().getSkins().get(SkinType.SKIN).getId());
             }
         });
         uploader.addSkinLoadedEventListener((type, location, profileTexture) -> {
-            MineLittlePony.logger.debug("Invalidating old remote skin, checking updated remote skin");
+            MineLittlePony.LOGGER.debug("Invalidating old remote skin, checking updated remote skin");
             if (type == SkinType.SKIN) {
                 MineLittlePony.getInstance().getManager().removePony(location);
             }
