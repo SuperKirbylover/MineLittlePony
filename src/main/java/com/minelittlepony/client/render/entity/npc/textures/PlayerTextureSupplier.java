@@ -16,7 +16,7 @@ public class PlayerTextureSupplier {
         Function<String, CompletableFuture<Identifier>> customNameCache = Util.memoize(name -> {
             return SkullBlockEntity.fetchProfileByName(name).thenApply(profile -> {
                 return profile
-                        .map(p -> SkinsProxy.instance.getSkinTexture(p))
+                        .map(p -> SkinsProxy.getInstance().getSkinTexture(p))
                         .filter(skin -> !Pony.getManager().getPony(skin).race().isHuman())
                         .orElse(null);
             });

@@ -13,7 +13,6 @@ import com.minelittlepony.hdskins.client.gui.player.DummyPlayer;
 import com.minelittlepony.hdskins.client.gui.player.skins.PlayerSkins.PlayerSkin;
 import com.minelittlepony.hdskins.client.profile.SkinLoader.ProvidedSkins;
 import com.minelittlepony.hdskins.profile.SkinType;
-
 import com.mojang.authlib.GameProfile;
 
 import java.util.*;
@@ -25,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 
@@ -33,7 +33,7 @@ import com.minelittlepony.client.*;
 /**
  * All the interactions with HD Skins.
  */
-public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
+public class MineLPHDSkins extends ClientSkinsProxy implements ClientModInitializer {
 
     static SkinType seaponySkinType;
     static SkinType nirikSkinType;
@@ -42,7 +42,6 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        SkinsProxy.instance = this;
         PonySettingsScreen.buttonFactory = this::renderOption;
 
         seaponySkinType = SkinType.register(DefaultPonySkinHelper.SEAPONY_SKIN_TYPE_ID, Items.COD_BUCKET.getDefaultStack());
@@ -92,8 +91,13 @@ public class MineLPHDSkins extends SkinsProxy implements ClientModInitializer {
     }
 
     @Override
-    public Optional<Identifier> getSkin(Identifier skinTypeId, AbstractClientPlayerEntity player) {
-        return SkinType.REGISTRY.getOrEmpty(skinTypeId).flatMap(type -> getSkin(type, player));
+    public Optional<Identifier> getSkin(Identifier skinTypeId, PlayerEntity player) {
+        if (player instanceof AbstractClientPlayerEntity clientPlayer) {
+            return SkinType.REGISTRY.getOrEmpty(skinTypeId).flatMap(type -> getSkin(type, clientPlayer));
+
+        }
+
+        return Optional.empty();
     }
 
     public Set<Identifier> getAvailableSkins(Entity entity) {

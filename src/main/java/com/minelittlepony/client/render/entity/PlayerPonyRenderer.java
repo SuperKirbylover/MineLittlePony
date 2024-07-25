@@ -196,7 +196,7 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
 
     @Override
     public Identifier getDefaultTexture(AbstractClientPlayerEntity entity, Wearable wearable) {
-        return SkinsProxy.instance.getSkin(wearable.getId(), entity).orElseGet(() -> {
+        return SkinsProxy.getInstance().getSkin(wearable.getId(), entity).orElseGet(() -> {
             if (wearable.isSaddlebags() && getInternalRenderer().getModels().body().getRace().supportsLegacySaddlebags()) {
                 return getTexture(entity);
             }

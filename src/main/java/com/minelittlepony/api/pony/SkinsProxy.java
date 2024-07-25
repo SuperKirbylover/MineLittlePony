@@ -1,28 +1,39 @@
 package com.minelittlepony.api.pony;
 
-import com.mojang.authlib.GameProfile;
-
 import java.util.Optional;
 import java.util.Set;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.texture.PlayerSkinProvider;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.authlib.GameProfile;
 
 /**
  * Proxy handler for getting player skin data from HDSkins
  */
 public class SkinsProxy {
-    public static SkinsProxy instance = new SkinsProxy();
+    public static SkinsProxy INSTANCE = new SkinsProxy();
+    private static final SkinsProxy DEFAULT = INSTANCE;
 
-    public Identifier getSkinTexture(GameProfile profile) {
-        PlayerSkinProvider skins = MinecraftClient.getInstance().getSkinProvider();
-        return skins.getSkinTextures(profile).texture();
+    public static SkinsProxy getInstance() {
+        return INSTANCE;
     }
 
-    public Optional<Identifier> getSkin(Identifier skinTypeId, AbstractClientPlayerEntity player) {
+    protected SkinsProxy() {
+        if (INSTANCE == DEFAULT) {
+            INSTANCE = this;
+        }
+    }
+
+    @Nullable
+    public Identifier getSkinTexture(GameProfile profile) {
+        return null;
+    }
+
+    public Optional<Identifier> getSkin(Identifier skinTypeId, PlayerEntity player) {
         return Optional.empty();
     }
 

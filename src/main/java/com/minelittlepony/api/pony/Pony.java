@@ -27,6 +27,13 @@ public record Pony (
     }
 
     /**
+     * Gets an identifier for the Mine Little Pony namespace
+     */
+    public static Identifier id(String name) {
+        return Identifier.of("minelittlepony", name);
+    }
+
+    /**
      * Gets the metadata associated with this pony's model texture.
      */
     public PonyData metadata() {

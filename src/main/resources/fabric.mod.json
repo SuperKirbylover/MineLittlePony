@@ -15,8 +15,11 @@
   "license": "MIT",
   "icon": "minelp_logo.png",
   "accessWidener": "minelp.aw",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
+    "main": [
+      "com.minelittlepony.server.MineLittlePonyServer"
+    ],
     "client": [
       "com.minelittlepony.client.MineLittlePony"
     ],

@@ -1,5 +1,7 @@
 package com.minelittlepony.api.pony;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.util.Identifier;
@@ -10,24 +12,21 @@ import com.minelittlepony.api.pony.meta.Race;
 import java.util.*;
 import java.util.function.Function;
 
+@Environment(EnvType.CLIENT)
 public final class DefaultPonySkinHelper {
-    public static final Identifier STEVE = id("textures/entity/player/wide/steve_pony.png");
+    public static final Identifier STEVE = Pony.id("textures/entity/player/wide/steve_pony.png");
 
-    public static final Identifier SEAPONY_SKIN_TYPE_ID = id("seapony");
-    public static final Identifier NIRIK_SKIN_TYPE_ID = id("nirik");
+    public static final Identifier SEAPONY_SKIN_TYPE_ID = Pony.id("seapony");
+    public static final Identifier NIRIK_SKIN_TYPE_ID = Pony.id("nirik");
 
     private static final Function<SkinTextures, SkinTextures> SKINS = Util.memoize(original -> new SkinTextures(
-            id(original.texture().getPath().replace(".png", "_pony.png")),
+            Pony.id(original.texture().getPath().replace(".png", "_pony.png")),
             null,
             null,
             null,
             original.model(),
             false
     ));
-
-    public static Identifier id(String name) {
-        return Identifier.of("minelittlepony", name);
-    }
 
     public static SkinTextures getTextures(SkinTextures original) {
         return SKINS.apply(original);

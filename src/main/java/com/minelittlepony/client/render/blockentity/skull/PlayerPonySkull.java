@@ -39,7 +39,7 @@ public class PlayerPonySkull implements ISkull {
         renderingEars = profile != null && "deadmau5".equals(profile.gameProfile().getName());
 
         if (profile != null) {
-            Identifier skin = SkinsProxy.instance.getSkinTexture(profile.gameProfile());
+            Identifier skin = SkinsProxy.getInstance().getSkinTexture(profile.gameProfile());
 
             if (skin != null) {
                 return skin;

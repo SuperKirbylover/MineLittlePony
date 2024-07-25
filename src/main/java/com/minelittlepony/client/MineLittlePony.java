@@ -1,7 +1,7 @@
 package com.minelittlepony.client;
 
 import com.minelittlepony.api.config.PonyConfig;
-import com.minelittlepony.api.events.Channel;
+import com.minelittlepony.api.events.ClientChannel;
 import com.minelittlepony.client.model.ModelType;
 import com.minelittlepony.client.model.armour.ArmourTextureResolver;
 import com.minelittlepony.client.render.MobRenderers;
@@ -89,10 +89,12 @@ public class MineLittlePony implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
         ScreenInitCallback.EVENT.register(this::onScreenInit);
 
+        new ClientSkinsProxy();
+
         config.load();
         config.onChangedExternally(c -> initialized = false);
 
-        Channel.bootstrap();
+        ClientChannel.bootstrap();
         ModelType.bootstrap();
 
         FabricLoader.getInstance().getEntrypoints("minelittlepony", ClientModInitializer.class).forEach(ClientModInitializer::onInitializeClient);

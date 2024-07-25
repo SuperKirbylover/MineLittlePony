@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.tag.FluidTags;
@@ -92,7 +91,7 @@ public final class PonyPosture {
         }
         return Pony.getManager().getPony(entity).filter(pony -> {
             return (pony.race() == Race.SEAPONY
-                    || (entity instanceof AbstractClientPlayerEntity player && SkinsProxy.instance.getSkin(DefaultPonySkinHelper.SEAPONY_SKIN_TYPE_ID, player).isPresent())
+                    || (entity instanceof PlayerEntity player && SkinsProxy.getInstance().getSkin(DefaultPonySkinHelper.SEAPONY_SKIN_TYPE_ID, player).isPresent())
             );
         }).isPresent();
     }
@@ -103,7 +102,7 @@ public final class PonyPosture {
         }
         return Pony.getManager().getPony(entity).filter(pony -> {
             return (pony.race() == Race.KIRIN
-                    && (entity instanceof AbstractClientPlayerEntity player && SkinsProxy.instance.getSkin(DefaultPonySkinHelper.NIRIK_SKIN_TYPE_ID, player).isPresent())
+                    && (entity instanceof PlayerEntity player && SkinsProxy.getInstance().getSkin(DefaultPonySkinHelper.NIRIK_SKIN_TYPE_ID, player).isPresent())
             );
         }).isPresent();
     }

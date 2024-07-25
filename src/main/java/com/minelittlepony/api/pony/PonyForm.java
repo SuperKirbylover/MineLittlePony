@@ -1,5 +1,7 @@
 package com.minelittlepony.api.pony;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -18,10 +20,11 @@ import java.util.function.Predicate;
  * Other options are water (seaponies that go shoop-de-doo)
  * And Niriks (the burning form of kirins)
  */
+@Environment(EnvType.CLIENT)
 public record PonyForm(Identifier id, Predicate<PlayerEntity> shouldApply, RendererFactory<?> factory) {
-    public static final Identifier DEFAULT = DefaultPonySkinHelper.id("land");
-    public static final Identifier SEAPONY = DefaultPonySkinHelper.id("seapony");
-    public static final Identifier NIRIK = DefaultPonySkinHelper.id("nirik");
+    public static final Identifier DEFAULT = Pony.id("land");
+    public static final Identifier SEAPONY = Pony.id("seapony");
+    public static final Identifier NIRIK = Pony.id("nirik");
 
     public static final List<Identifier> VALUES = new ArrayList<>();
     public static final Map<Identifier, PonyForm> REGISTRY = new HashMap<>();

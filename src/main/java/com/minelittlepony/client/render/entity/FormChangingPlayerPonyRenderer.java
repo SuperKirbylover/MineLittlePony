@@ -25,7 +25,7 @@ public class FormChangingPlayerPonyRenderer extends PlayerPonyRenderer {
     @Override
     public Identifier getTexture(AbstractClientPlayerEntity player) {
         if (transformed) {
-            return SkinsProxy.instance.getSkin(alternateFormSkinId, player).orElseGet(() -> super.getTexture(player));
+            return SkinsProxy.getInstance().getSkin(alternateFormSkinId, player).orElseGet(() -> super.getTexture(player));
         }
         return super.getTexture(player);
     }

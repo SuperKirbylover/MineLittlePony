@@ -169,7 +169,7 @@ public class ModelAttributes {
         }
         isLeftHanded = entity.getMainArm() == Arm.LEFT;
         isHorsey = PonyConfig.getInstance().horsieMode.get();
-        featureSkins = SkinsProxy.instance.getAvailableSkins(entity);
+        featureSkins = SkinsProxy.getInstance().getAvailableSkins(entity);
         mainArm = entity.getMainArm();
         activeHand = entity.getActiveHand();
         itemUseTime = entity.getItemUseTimeLeft();

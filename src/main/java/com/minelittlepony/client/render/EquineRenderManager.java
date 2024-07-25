@@ -1,7 +1,7 @@
 package com.minelittlepony.client.render;
 
 import com.minelittlepony.api.config.PonyConfig;
-import com.minelittlepony.api.events.Channel;
+import com.minelittlepony.api.events.ClientChannel;
 import com.minelittlepony.api.events.PonyDataCallback;
 import com.minelittlepony.api.model.*;
 import com.minelittlepony.api.pony.Pony;
@@ -177,9 +177,9 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
                 @Nullable
                 PlayerEntity clientPlayer = MinecraftClient.getInstance().player;
 
-                if (Channel.isRegistered() && pony.compareTo(lastTransmittedPony) != 0) {
+                if (ClientChannel.isRegistered() && pony.compareTo(lastTransmittedPony) != 0) {
                     if (clientPlayer != null && (Objects.equals(player, clientPlayer) || Objects.equals(player.getGameProfile(), clientPlayer.getGameProfile()))) {
-                        if (Channel.broadcastPonyData(pony.metadata())) {
+                        if (ClientChannel.broadcastPonyData(pony.metadata())) {
                             lastTransmittedPony = pony;
                         }
                     }
