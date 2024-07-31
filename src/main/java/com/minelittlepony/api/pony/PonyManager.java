@@ -7,6 +7,8 @@ import net.minecraft.util.Identifier;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.minelittlepony.server.ServerPonyManager;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,6 +73,6 @@ public interface PonyManager  {
     interface ForcedPony {}
 
     final class Instance {
-        public static PonyManager instance;
+        public static PonyManager instance = new ServerPonyManager();
     }
 }
