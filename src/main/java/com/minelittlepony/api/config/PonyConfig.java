@@ -140,12 +140,12 @@ public class PonyConfig extends Config {
      */
     public static Race getEffectiveRace(Race race) {
 
-        Race override = instance.raceOverride.get();
+        Race override = getInstance().raceOverride.get();
         if (override != Race.HUMAN) {
             return override;
         }
 
-        if (instance.ponyLevel.get() == PonyLevel.HUMANS) {
+        if (getInstance().ponyLevel.get() == PonyLevel.HUMANS) {
             return Race.HUMAN;
         }
 
@@ -153,7 +153,7 @@ public class PonyConfig extends Config {
     }
 
     public static Size getEffectiveSize(Size size) {
-        SizePreset sz = instance.sizeOverride.get();
+        SizePreset sz = getInstance().sizeOverride.get();
 
         if (sz != SizePreset.UNSET) {
             return sz;
