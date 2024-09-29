@@ -37,11 +37,11 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
         modelsCache = Util.memoize(race -> ModelType.getPlayerModel(race).create(slim));
         manager = new EquineRenderManager<>(this, super::setupTransforms, modelsCache.apply(Race.EARTH));
         manager.setModelsLookup(entity -> modelsCache.apply(getPlayerRace(entity, getEntityPony(entity))));
-        addLayers(context);
+        addPonyFeatures(context);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void addLayers(EntityRendererFactory.Context context) {
+    protected void addPonyFeatures(EntityRendererFactory.Context context) {
         // remove vanilla features (keep modded ones)
         features.removeIf(feature -> {
             return feature instanceof ArmorFeatureRenderer
@@ -52,18 +52,18 @@ public class PlayerPonyRenderer extends PlayerEntityRenderer implements PonyRend
                     || feature instanceof ElytraFeatureRenderer
                     || feature instanceof ShoulderParrotFeatureRenderer;
         });
-        addLayer(new ArmourFeature<>(this, context.getModelManager()));
-        addLayer(new HeldItemFeature(this, context.getHeldItemRenderer()));
-        addLayer(new DJPon3Feature<>(this));
-        addLayer(new CapeFeature<>(this));
-        addLayer(new SkullFeature<>(this, context.getModelLoader(), context.getItemRenderer()));
-        addLayer(new ElytraFeature<>(this));
-        addLayer(new PassengerFeature<>(this, context));
-        addLayer(new GearFeature<>(this));
+        addPonyFeature(new ArmourFeature<>(this, context.getModelManager()));
+        addPonyFeature(new HeldItemFeature(this, context.getHeldItemRenderer()));
+        addPonyFeature(new DJPon3Feature<>(this));
+        addPonyFeature(new CapeFeature<>(this));
+        addPonyFeature(new SkullFeature<>(this, context.getModelLoader(), context.getItemRenderer()));
+        addPonyFeature(new ElytraFeature<>(this));
+        addPonyFeature(new PassengerFeature<>(this, context));
+        addPonyFeature(new GearFeature<>(this));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected boolean addLayer(FeatureRenderer<AbstractClientPlayerEntity, ? extends ClientPonyModel<AbstractClientPlayerEntity>> feature) {
+    protected final boolean addPonyFeature(FeatureRenderer<AbstractClientPlayerEntity, ? extends ClientPonyModel<AbstractClientPlayerEntity>> feature) {
         return ((List)features).add(feature);
     }
 
