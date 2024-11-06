@@ -16,6 +16,7 @@ public enum SizePreset implements Size {
     NORMAL  (0x000000, 0.4f,  0.8F,  0.8F),
     YEARLING(0x53beff, 0.4F,  0.6F,  0.65F),
     FOAL    (0xffbe53, 0.25f, 0.6F,  0.5F),
+	STOCKY	(0xb2e7dd, 0.45F, 0.8F,  0.8F),
     UNSET   (0x000000, 1,     1,     1);
 
     private final int triggerValue;
