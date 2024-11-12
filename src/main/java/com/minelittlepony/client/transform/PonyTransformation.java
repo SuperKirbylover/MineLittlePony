@@ -39,7 +39,7 @@ public enum PonyTransformation {
             }
         }
     },
-	STOCKY(SizePreset.STOCKY, 0, 3F, 0.75F) {
+    STOCKY(SizePreset.STOCKY, 0, 3F, 0.75F) {
         @Override
         public void transform(PonyModel<?> model, BodyPart part, MatrixStack stack) {
             if (model.getAttributes().isSwimming) stack.translate(0, -0.3F, 0);
@@ -51,7 +51,7 @@ public enum PonyTransformation {
             switch (part) {
                 case NECK:
                     stack.translate(-0.015F, -0.05F, -0.04F);
-					stack.scale(1.4F, 1, 1.2F);
+                    stack.scale(1.4F, 1, 1.2F);
                     if (model.getAttributes().isCrouching) stack.translate(-0.025F, 0.03F, 0.15F);
                     if (model.getAttributes().isSitting) stack.translate(0, 0, 0.03F);
                     break;
@@ -59,15 +59,15 @@ public enum PonyTransformation {
                     if (model.getAttributes().isLyingDown) stack.translate(0, -0.05F, 0);
                     if (model.getAttributes().isCrouching) stack.translate(0, 0.1F, 0);
                     break;
-				case BODY:
-					stack.translate(0, -0.15F, -0.05F);
-					if (model.getAttributes().isCrouching) stack.translate(0, -0.07F, 0.04F);
-					if (model.getAttributes().isLyingDown) stack.translate(0, -0.1F, 0);
-					stack.scale(1.4F, 1.3F, 1.1F);
+                case BODY:
+                    stack.translate(0, -0.15F, -0.05F);
+                    if (model.getAttributes().isCrouching) stack.translate(0, -0.07F, 0.04F);
+                    if (model.getAttributes().isLyingDown) stack.translate(0, -0.1F, 0);
+                    stack.scale(1.4F, 1.3F, 1.1F);
                     break;
-				case LEGS:
-					stack.translate(0, 0, -0.1F);
-					if (model.getAttributes().isCrouching) stack.translate(0, 0, 0.1F);
+                case LEGS:
+                    stack.translate(0, 0, -0.1F);
+                    if (model.getAttributes().isCrouching) stack.translate(0, 0, 0.1F);
                     stack.scale(1.1F, 1, 1.1F);
                     break;
                 case BACK:
