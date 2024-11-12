@@ -50,9 +50,10 @@ public enum PonyTransformation {
 
             switch (part) {
                 case NECK:
-                    stack.translate(0, -0.05F, -0.04F);
+                    stack.translate(-0.015F, -0.05F, -0.04F);
 					stack.scale(1.4F, 1, 1.2F);
-                    if (model.getAttributes().isCrouching) stack.translate(-0.03F, 0.03F, 0.15F);
+                    if (model.getAttributes().isCrouching) stack.translate(-0.025F, 0.03F, 0.15F);
+                    if (model.getAttributes().isSitting) stack.translate(0, 0, 0.03F);
                     break;
                 case HEAD:
                     if (model.getAttributes().isLyingDown) stack.translate(0, -0.05F, 0);
