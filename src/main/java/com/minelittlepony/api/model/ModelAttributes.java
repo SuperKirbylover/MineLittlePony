@@ -2,11 +2,13 @@ package com.minelittlepony.api.model;
 
 import com.minelittlepony.api.config.PonyConfig;
 import com.minelittlepony.api.pony.*;
+import com.minelittlepony.client.compat.iris.IrisApiCompat;
 import com.minelittlepony.common.util.animation.Interpolator;
 import com.minelittlepony.util.MathUtil;
 
 import java.util.*;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.BipedEntityModel.ArmPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -73,6 +75,12 @@ public class ModelAttributes {
      */
     public boolean isHorsey;
 
+    @Deprecated
+    public boolean headVisible;
+
+    @Deprecated
+    public boolean hornGlowVisible = true;
+
     /**
      * Vertical pitch whilst flying.
      */
@@ -131,6 +139,7 @@ public class ModelAttributes {
         isGoingFast &= zMotion > 0.4F;
         isGoingFast |= entity.isUsingRiptide();
         isGoingFast |= entity.isFallFlying();
+        isGoingFast &= !entity.isSpectator();
 
         motionLerp = MathUtil.clampLimit(zMotion * 30, 1);
 
@@ -156,6 +165,13 @@ public class ModelAttributes {
             boolean moving = entity.getVelocity().multiply(1, 0, 1).length() == 0 && entity.isSneaking();
             isLyingDown |= getMainInterpolator().interpolate("lyingDown", moving ? 10 : 0, 200) >= 9;
         }
+
+        // Prevent head from rendering for ourselves if we are sleeping in first person mode
+        headVisible = entity != MinecraftClient.getInstance().getCameraEntity()
+                || !MinecraftClient.getInstance().options.getPerspective().isFirstPerson()
+                || !isLyingDown;
+        // Hide the horn glow if we're being rendered during an iris shadow pass
+        hornGlowVisible = !IrisApiCompat.isOnShadowPass();
 
         isCrouching = !isLyingDown && !isSitting && mode == Mode.THIRD_PERSON && PonyPosture.isCrouching(pony, entity);
         isFlying = !isLyingDown && mode == Mode.THIRD_PERSON && PonyPosture.isFlying(entity);

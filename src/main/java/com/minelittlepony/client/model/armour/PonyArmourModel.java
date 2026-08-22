@@ -14,13 +14,7 @@ public class PonyArmourModel<T extends LivingEntity> extends AbstractPonyModel<T
         super(tree);
     }
 
-    public boolean poseModel(T entity, float limbAngle, float limbDistance, float age, float headYaw, float headPitch,
-            EquipmentSlot slot, ArmourLayer layer,
-            PonyModel<T> mainModel) {
-
-        if (!setVisibilities(slot, layer)) {
-            return false;
-        }
+    public void setAngles(T entity, float limbAngle, float limbDistance, float age, float headYaw, float headPitch, PonyModel<T> mainModel) {
         mainModel.copyAttributes(this);
         setAngles(entity, limbAngle, limbDistance, age, headYaw, headPitch);
         if (mainModel instanceof BipedEntityModel<?> biped) {
@@ -31,10 +25,15 @@ public class PonyArmourModel<T extends LivingEntity> extends AbstractPonyModel<T
             rightLeg.copyTransform(biped.rightLeg);
             leftLeg.copyTransform(biped.leftLeg);
         }
-        return true;
     }
 
-    public boolean setVisibilities(EquipmentSlot slot, ArmourLayer layer) {
+    public boolean shouldRender(EquipmentSlot slot, ArmourLayer layer) {
+        return slot == EquipmentSlot.CHEST
+                || (layer == ArmourLayer.OUTER && slot == EquipmentSlot.HEAD)
+                || (slot == (layer == ArmourLayer.OUTER ? EquipmentSlot.FEET : EquipmentSlot.LEGS));
+    }
+
+    public void setVisibilities(EquipmentSlot slot, ArmourLayer layer) {
         setVisible(false);
         body.visible = slot == EquipmentSlot.CHEST;
         head.visible = layer == ArmourLayer.OUTER && slot == EquipmentSlot.HEAD;
@@ -44,9 +43,6 @@ public class PonyArmourModel<T extends LivingEntity> extends AbstractPonyModel<T
             leftArm.visible = true;
             rightLeg.visible = true;
             leftLeg.visible = true;
-            return true;
         }
-
-        return head.visible || body.visible;
     }
 }

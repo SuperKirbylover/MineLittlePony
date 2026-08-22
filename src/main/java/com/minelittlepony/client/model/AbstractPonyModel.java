@@ -115,6 +115,16 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
         rightPants.copyTransform(rightLeg);
         jacket.copyTransform(body);
         hat.copyTransform(head);
+
+        head.visible = attributes.headVisible;
+        hat.visible = head.visible && !attributes.isHorsey;
+        neck.visible = body.visible;
+        if (attributes.isHorsey) {
+            neck.visible = head.visible;
+        } else {
+            neck.hidden = !head.visible;
+        }
+        parts.forEach(part -> part.setVisible(body.visible, attributes));
     }
 
     protected void setModelAngles(T entity, float limbAngle, float limbSpeed, float animationProgress, float headYaw, float headPitch) {
@@ -264,6 +274,11 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
             rightArm.pivotY = leftArm.pivotY = 6;
             rightLeg.pivotZ = leftLeg.pivotZ = 19;
             rightLeg.pivotY = leftLeg.pivotY = 6;
+        }
+
+        if (attributes.isGoingFast) {
+            leftLeg.pivotZ -= 1F;
+            rightLeg.pivotZ -= 1F;
         }
     }
 
@@ -537,14 +552,6 @@ public abstract class AbstractPonyModel<T extends LivingEntity> extends ClientPo
             case BULKY:
             default: return 0.25F;
         }
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        neck.visible = visible;
-        hat.visible &= !attributes.isHorsey;
-        parts.forEach(part -> part.setVisible(visible, attributes));
     }
 
     @Override

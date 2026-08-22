@@ -33,7 +33,45 @@ public enum PonyTransformation {
                     if (model.getAttributes().isCrouching) stack.translate(0, 0.1F, 0);
                     break;
                 case BACK:
-                    translateForRider(stack);
+                    break;
+                default:
+            }
+        }
+    },
+    STOCKY(SizePreset.STOCKY, 0, 3F, 0.75F) {
+        @Override
+        public void transform(PonyModel<?> model, BodyPart part, MatrixStack stack) {
+            if (model.getAttributes().isSwimming) stack.translate(0, -0.3F, 0);
+            if (model.getAttributes().isCrouching) stack.translate(0, -0.2F, 0);
+            if (model.getAttributes().isLyingDown) stack.translate(0, -0.77F, 0.1F);
+            if (model.getAttributes().isSleeping) stack.translate(0, 0.16F, 0);
+            if (model.getAttributes().isSitting) stack.translate(0, -0.25F, -0.2F);
+
+            switch (part) {
+                case NECK:
+                    stack.translate(-0.015F, -0.05F, -0.04F);
+                    stack.scale(1.4F, 1, 1.2F);
+                    if (model.getAttributes().isCrouching) stack.translate(-0.025F, 0.03F, 0.15F);
+                    if (model.getAttributes().isSitting) stack.translate(0, 0, 0.03F);
+                    break;
+                case HEAD:
+                    if (model.getAttributes().isLyingDown) stack.translate(0, -0.05F, 0);
+                    if (model.getAttributes().isCrouching) stack.translate(0, 0.1F, 0);
+                    break;
+                case BODY:
+                    stack.translate(0, -0.15F, -0.05F);
+                    if (model.getAttributes().isCrouching) stack.translate(0, -0.07F, 0.04F);
+                    if (model.getAttributes().isLyingDown) stack.translate(0, -0.1F, 0);
+                    stack.scale(1.4F, 1.3F, 1.1F);
+                    break;
+                case LEGS:
+                    stack.translate(0, 0, -0.1F);
+                    if (model.getAttributes().isCrouching) stack.translate(0, 0, 0.1F);
+                    stack.scale(1.1F, 1, 1.1F);
+                    break;
+                case BACK:
+                    stack.translate(0, -0.08F, -0.05F);
+                    if (model.getAttributes().isLyingDown) stack.translate(0, -0.1F, 0);
                     break;
                 default:
             }
@@ -108,7 +146,7 @@ public enum PonyTransformation {
                     stack.scale(0.9F, 1.12F, 0.9F);
                     break;
                 case BACK:
-                    translateForRider(stack);
+                    stack.translate(0, -0.14F, -0.04F);
                     break;
             }
         }
@@ -144,7 +182,7 @@ public enum PonyTransformation {
                     stack.scale(1.15F, 1.12F, 1.15F);
                     break;
                 case BACK:
-                    translateForRider(stack);
+                    stack.translate(0, -0.15F, -0.04F);
                     break;
             }
         }
@@ -174,7 +212,6 @@ public enum PonyTransformation {
                     stack.scale(1, 0.81F, 1);
                     break;
                 case BACK:
-                    translateForRider(stack);
                     break;
                 default:
             }
@@ -200,15 +237,13 @@ public enum PonyTransformation {
                     break;
                 case BODY:
                 case TAIL:
+                case BACK:
                     stack.translate(0, -0.1F, 0);
                     break;
                 case LEGS:
                     stack.translate(0, -0.27F, 0.03F);
                     stack.scale(1, 1.18F, 1);
                     if (model.getAttributes().isGoingFast) stack.translate(0, 0.05F, 0);
-                    break;
-                case BACK:
-                    translateForRider(stack);
                     break;
             }
         }
@@ -235,6 +270,7 @@ public enum PonyTransformation {
                     break;
                 case BODY:
                 case TAIL:
+                case BACK:
                     stack.translate(0, -0.1F, 0);
                     break;
                 case LEGS:
@@ -242,8 +278,46 @@ public enum PonyTransformation {
                     stack.scale(1, 1.18F, 1);
                     if (model.getAttributes().isGoingFast) stack.translate(0, 0.05F, 0);
                     break;
+            }
+        }
+    },
+    SQUAT(SizePreset.SQUAT, 0, 3.4F, 0.75F) {
+        @Override
+        public void transform(PonyModel<?> model, BodyPart part, MatrixStack stack) {
+            if (model.getAttributes().isSwimming) stack.translate(0, -0.6F, 0);
+            if (model.getAttributes().isCrouching) stack.translate(0, -0.2F, 0);
+            if (model.getAttributes().isLyingDown) stack.translate(0, -1, 0);
+            if (model.getAttributes().isSleeping) stack.translate(0, 0.2F, 0);
+            if (model.getAttributes().isSitting) stack.translate(0, -0.5F, -0.2F);
+
+            stack.translate(0, -0.05F, 0);
+
+            switch (part) {
+                case NECK:
+                    stack.translate(-0.01F, 0.1F, 0.03F);
+                    stack.scale(1.4F, 1, 1.1F);
+                    if (model.getAttributes().isCrouching) stack.translate(-0.03F, 0.04F, 0.1F);
+                    break;
+                case HEAD:
+                    stack.translate(0, 0.07F, 0);
+                    stack.scale(1.15F, 1.15F, 1.15F);
+                    if (model.getAttributes().isCrouching) stack.translate(0, 0.07F, 0);
+                    break;
+                case BODY:
+                    stack.scale(1.4F, 1.3F, 1);
+                    if (model.getAttributes().isCrouching) stack.translate(0, -0.05F, 0);
+                    break;
                 case BACK:
-                    translateForRider(stack);
+                    stack.translate(0, 0.07F, 0);
+                    if (model.getAttributes().isCrouching) stack.translate(0, -0.05F, 0);
+                    break;
+                case TAIL:
+                    stack.translate(0, -0.1F, 0);
+                    break;
+                case LEGS:
+                    stack.translate(0, 0.35F, 0.02F);
+                    stack.scale(1.1F, 0.8F, 1.1F);
+                    if (model.getAttributes().isLyingDown) stack.translate(0, -0.1F, 0);
                     break;
             }
         }

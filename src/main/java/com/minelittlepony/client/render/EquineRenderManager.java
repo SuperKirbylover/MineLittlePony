@@ -21,7 +21,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 
 import org.jetbrains.annotations.Nullable;
@@ -93,17 +93,9 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
             }
         }
 
-        bodyYaw = getMountedYaw(entity, bodyYaw, tickDelta);
         transformer.setupTransforms(entity, stack, animationProgress, bodyYaw, tickDelta, scale);
 
         PonyPosture.of(getModels().body().getAttributes()).apply(entity, getModels().body(), stack, bodyYaw, tickDelta, 1);
-    }
-
-    private float getMountedYaw(T entity, float bodyYaw, float tickDelta) {
-        if (entity.hasVehicle() && entity.getVehicle() instanceof LivingEntity mount) {
-            return bodyYaw + MathUtil.interpolateDegress(mount.prevBodyYaw, mount.bodyYaw, tickDelta);
-        }
-        return bodyYaw;
     }
 
     public float getScaleFactor() {
@@ -154,6 +146,7 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
         private Supplier<Optional<PonyData>> lastPonyData = PonyDataLoader.NULL;
         @Nullable
         private Pony lastTransmittedPony;
+        private boolean seated;
 
         public Pony getCachedPony() {
             return lastRenderedPony;
@@ -163,15 +156,32 @@ public class EquineRenderManager<T extends LivingEntity, M extends EntityModel<T
             return lastPonyData.get().orElse(PonyData.NULL);
         }
 
+        public EntityDimensions modifyEyeHeight(PlayerEntity player, EntityDimensions dimensions, EntityPose pose) {
+            float factor = lastRenderedPony == null ? 1 : lastRenderedPony.size().eyeHeightFactor();
+
+            if (factor == 1) {
+                return dimensions;
+            }
+
+            float eyeHeight = dimensions.eyeHeight() * factor;
+            if (player.hasVehicle()) {
+                eyeHeight += player.getVehicleAttachmentPos(player.getVehicle()).getY();
+            }
+
+            return dimensions.withEyeHeight(eyeHeight);
+        }
+
         public void synchronize(PlayerEntity player) {
             Pony pony = Pony.getManager().getPony(player);
             boolean changed = pony.compareTo(lastRenderedPony) != 0;
+            boolean seated = player.hasVehicle();
 
-            if (changed) {
+            if (changed || seated != this.seated) {
                 lastRenderedPony = pony;
                 lastPonyData = pony.metadataGetter();
                 player.calculateDimensions();
             }
+            this.seated = seated;
 
             if (!(player instanceof PreviewModel)) {
                 @Nullable
